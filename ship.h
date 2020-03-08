@@ -12,7 +12,7 @@ typedef struct ship{
     BOOL sunk; // FALSE -> alive / TRUE -> dead
 }SHIP;
 
-//-------------------------------------------------------
+//---------------------------------------------------------------
 static void ship_error(char *);
 
 static int calculate_size(COORD, COORD);
