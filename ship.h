@@ -6,31 +6,31 @@
 #include "types.h"
 
 typedef struct ship{
-    int xi, yi, xf, yf;
+    COORD begin, end;
     int size;
     int hits;   // how many attacks suffered
     BOOL sunk; // FALSE -> alive / TRUE -> dead
 }SHIP;
 
-//-------------------------------------------------------
-static void ship_error(char *msg);
+//---------------------------------------------------------------
+static void ship_error(char *);
 
-static int calculate_size(int xi, int yi, int xf, int yf);
+static int calculate_size(COORD, COORD);
 
-SHIP *create_ship(int xi, int yi, int xf, int yf);
+SHIP *create_ship(COORD, COORD);
 
-void free_ship(SHIP *s);
+void free_ship(SHIP *);
 
-void set_size(SHIP *s, int xi, int yi, int xf, int yf);
+void set_size(SHIP *, COORD, COORD);
 
 //---------------------------------------------------------------
 
-static int calculate_size(int xi, int yi, int xf, int yf){
-    if(xi == xf){ //Vertical
-        return yf - yi;
+static int calculate_size(COORD begin, COORD end){
+    if(begin.x == end.x){ //Vertical
+        return end.y - begin.y;
     }
-    else if(yi == yf){ //Horizontal
-        return xf - xi;
+    else if(begin.y == end.y){ //Horizontal
+        return end.x - begin.x;
     }
     return -1;
 }
@@ -41,21 +41,19 @@ static void ship_error(char *msg){
     exit(EXIT_FAILURE);
 }
 
-SHIP *create_ship(int xi, int yi, int xf, int yf){ // VERIFICAR COORDENANDAS CORRECTAS
+SHIP *create_ship(COORD begin, COORD end){ // VERIFICAR COORDENANDAS CORRECTAS
     SHIP *s = (SHIP *)malloc(sizeof(SHIP));
     if (s == NULL){ship_error("No memory");}
-    set_size(s,xi,yi,xf,yf);
-    s -> xi = xi;
-    s -> yi = yi;
-    s -> xf = xf;
-    s -> yf = yf;
+    set_size(s, begin, end);
+    s -> begin = begin;
+    s -> end = end;
     s -> hits = 0;
     s -> sunk = FALSE;
     return s;
 }
 
-void set_size(SHIP *s, int xi, int yi, int xf, int yf){
-    int size = calculate_size(xi,yi,xf,yf);
+void set_size(SHIP *s, COORD begin, COORD end){
+    int size = calculate_size(begin, end);
     if (size == -1){
         ship_error("Invalid ship coordinates");
         free_ship(s);

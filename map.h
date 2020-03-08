@@ -11,6 +11,12 @@ typedef struct map{
     SHIP **ships;
 }MAP;
 
+//---------------------------------------------------
+static void map_exit_error(char *);
+
+void free_map(MAP *);
+
+//---------------------------------------------------
 static void map_exit_error(char *msg){
     fprintf(stderr,"Error: %s.\n",msg);
     exit(EXIT_FAILURE);
