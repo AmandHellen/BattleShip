@@ -3,4 +3,8 @@
 
 typedef enum {FALSE,TRUE} BOOL;
 
+typedef struct coord{
+    int x, y;
+}COORD;
+
 #endif
