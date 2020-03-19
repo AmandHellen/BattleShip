@@ -17,17 +17,18 @@ typedef struct player{
 //-----------------------------------------------------
 PLAYER *create_player(int, int, MODE, BOOL);
 
-//SHIP *get_ships(int, int **, MODE);initiliaze
-
 MAP *fill_map(TILE **, int, MODE);
 
 SHIP *get_ship(void);
 
 BOOL place_ship(SHIP *, TILE **);
 
+void free_player(PLAYER *);
+
 static void player_error(char *);
 
 //-----------------------------------------------------
+// returns a new instance of PLAYER
 PLAYER *create_player(int dim, int n_ships, MODE mode, BOOL playing){
     /*PLAYER *p = (PLAYER*)malloc(sizeof(PLAYER));
     if(p == NULL){player_error("No memory");}
@@ -38,26 +39,43 @@ PLAYER *create_player(int dim, int n_ships, MODE mode, BOOL playing){
     return p;*/
 }
 
+/*
+keep generating ships (or asking for them) and placing them on the 2D matrix
+return a new instance of MAP with that matrix
+*/
 MAP *fill_map(TILE **empty_map, int n_ships, MODE mode){
     SHIP *ships[n_ships];
-    BOOL placed;
+    BOOL placed;    // if the ship is successfully placed
     SHIP *new_ship;
-    
     for(int i=0; i<n_ships; i++){
         input_ship:
+            /*if (mode == RANDOM){
+                new_ship = generate_ship();
+            }
+            else{
+                new_ship = get_ship();
+            }*/
             new_ship = get_ship();
+            if (new_ship == NULL){
+                printf("ERROR: The ship direction must be either HORIZONTAL or VERTICAL. Try again.\n");
+                goto input_ship; // try again
+            }
             placed = place_ship(new_ship, empty_map);
-            if (placed == FALSE){goto input_ship;}
+            if (placed == FALSE){
+                printf("ERROR: The ship is colliding with another ship in the map. Try again.\n");
+                goto input_ship; // try again 
+            }
             ships[i] = new_ship;
     }
     MAP *map = create_map(ships, empty_map);
     return map;
 }
 
+// prompts the player for the new ship coordinates and returns the ship
 SHIP *get_ship(void){
     COORD begin, end;
-    int positions[4];
-    char *prompts[4] = {"xi: ", "yi: " , "xf: ", "yf: "};
+    int positions[4]; // [xi, yi, xf, yf]
+    char *prompts[4] = {"xi: ", "yi: " , "xf: ", "yf: "}; // sequence of prompts
 
     for(int i = 0; i < 4; i++){
         printf("%s", prompts[i]);
@@ -73,6 +91,7 @@ SHIP *get_ship(void){
     return s;
 }
 
+// checks the matrix for collisions and place the ship if there's none (POR ACABAR)
 BOOL place_ship(SHIP *s, TILE **matrix){
     if (s -> dir == HORIZONTAL){
         for(int i=0; i<s -> size; i++){
@@ -88,6 +107,18 @@ BOOL place_ship(SHIP *s, TILE **matrix){
     return TRUE;
 }
 
+// Destroys the structure
+void free_player(PLAYER *p){
+    if (p != NULL){
+        free_map(p -> map);
+        free(p);
+    }
+    else{
+        player_error("The player was badly generated");
+    }
+}
+
+// Call this when there is a memory related error
 static void player_error(char *msg){
     fprintf(stderr,"Error: %s.\n",msg);
     exit(EXIT_FAILURE);

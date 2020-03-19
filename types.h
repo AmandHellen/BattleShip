@@ -3,11 +3,11 @@
 
 typedef enum {FALSE, TRUE} BOOL;
 
-typedef enum {RANDOM, MANUAL} MODE;
+typedef enum {RANDOM, MANUAL} MODE; // ship creation mode
 
-typedef enum {EMPTY, FILLED, HIT} TILE;
+typedef enum {EMPTY, FILLED, HIT} TILE; // status of each matrix cell
 
-typedef enum {HORIZONTAL, VERTICAL} DIR;
+typedef enum {HORIZONTAL, VERTICAL} DIR; // ship orientation 
 
 typedef struct coord{
     int x, y;
