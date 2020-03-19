@@ -21,13 +21,16 @@ void free_map(MAP *);
 static void map_error(char *);
 
 //---------------------------------------------------
+
+//returns a 2D matrix of TILES (all EMPTY)
 TILE **create_empty_map(int dim){
     TILE **matrix;
+    //allocate memory for the 2D matrix
     matrix = malloc(sizeof(TILE*)*dim);
     for(int i=0; i<dim; i++){
         matrix[i] = malloc(sizeof(TILE*)*dim);
     }
-    //initialize all the positions as 0 (empty)
+    //initialize all the positions as EMPTY
     for(int i=0; i<dim; i++){
         for(int j=0; j<dim; j++){
             matrix[i][j] = EMPTY;
@@ -36,6 +39,7 @@ TILE **create_empty_map(int dim){
     return matrix;
 }
 
+//returns a new instance of MAP
 MAP *create_map(SHIP **ships, TILE **matrix){
     MAP *m = (MAP*)malloc(sizeof(MAP));
     if(m == NULL){map_error("No memory");}
@@ -44,6 +48,7 @@ MAP *create_map(SHIP **ships, TILE **matrix){
     return m;
 }
 
+// Destroy the structure
 void free_map(MAP *m){
     if(m != NULL){
         free(m -> ships);
@@ -54,6 +59,7 @@ void free_map(MAP *m){
     }
 }
 
+// Call this when there is a memory related error
 static void map_error(char *msg){
     fprintf(stderr,"Error: %s.\n",msg);
     exit(EXIT_FAILURE);

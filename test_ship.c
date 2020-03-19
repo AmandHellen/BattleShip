@@ -9,10 +9,10 @@ void print_ship_info(SHIP *s){
 
 int main(){
     COORD begin, end;
-    begin.x = 3;
-    begin.y = 10;
-    end.x = 7;
-    end.y = 10;
+    begin.x = 5;
+    begin.y = 5;
+    end.x = 5;
+    end.y = 3;
     SHIP *s = create_ship(begin, end);
     print_ship_info(s);
     free_ship(s);

@@ -1,0 +1,3 @@
+ONDE ESTAMOS: player.h (fill_map() + place_ship() + barcos de tamanho 0 )
+
+1 -> free(SHIP **) -> percorrer array e ir fazendo frees?
