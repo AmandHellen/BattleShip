@@ -39,11 +39,14 @@ PLAYER *create_player(int dim, int n_ships, MODE mode, BOOL playing){
 }
 
 MAP *fill_map(TILE **empty_map, int n_ships, MODE mode){
-    SHIP ships[n_ships];
+    SHIP *ships[n_ships];
+    BOOL placed;
+    SHIP *new_ship;
+    
     for(int i=0; i<n_ships; i++){
         input_ship:
-            SHIP *new_ship = get_ship(void);
-            BOOL placed = place_ship(new_ship, map);
+            new_ship = get_ship();
+            placed = place_ship(new_ship, empty_map);
             if (placed == FALSE){goto input_ship;}
             ships[i] = new_ship;
     }
@@ -82,6 +85,7 @@ BOOL place_ship(SHIP *s, TILE **matrix){
         }
         return TRUE;
     }
+    return TRUE;
 }
 
 static void player_error(char *msg){
