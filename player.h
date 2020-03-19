@@ -52,26 +52,21 @@ MAP *fill_map(TILE **empty_map, int n_ships, MODE mode){
 }
 
 SHIP *get_ship(void){
-    int xi, yi, xf, yf;
     COORD begin, end;
-//    int positions[4] = [xi,yi,xf,yf];
-    printf("xi: ");
-    scanf("%d", &xi);
-    printf("\n");
-    printf("yi: ");
-    scanf("%d", &yi);
-    printf("\n");
-    printf("xf: ");
-    scanf("%d", &xf);
-    printf("\n");
-    printf("yf: ");
-    scanf("%d", &yf);
-    printf("\n");
-    begin.x = xi;
-    begin.y = yi;
-    end.x = xf;
-    end.y = yf;
-    SHIP *s = create_ship(begin,end);
+    int positions[4];
+    char *prompts[4] = {"xi: ", "yi: " , "xf: ", "yf: "};
+
+    for(int i = 0; i < 4; i++){
+        printf("%s", prompts[i]);
+        scanf("%d", &positions[i]);
+        printf("\n");
+    }
+
+    begin.x = positions[0];
+    begin.y = positions[1];
+    end.x = positions[2];
+    end.y = positions[3];
+    SHIP *s = create_ship(begin, end);
     return s;
 }
 
