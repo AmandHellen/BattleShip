@@ -51,7 +51,18 @@ MAP *create_map(SHIP **ships, TILE **matrix){
 // Destroy the structure
 void free_map(MAP *m){
     if(m != NULL){
-        free(m -> ships);
+        int i = 0;
+        while(m->ships[i] != NULL){
+            free(m->ships[i]);
+            i++;
+        }
+        free(m->ships);
+
+        i = 0;
+        while(m->matrix[i] != NULL){
+            free(m->matrix[i]);
+            i++;
+        }
         free(m -> matrix);
         free(m);
     }else{
