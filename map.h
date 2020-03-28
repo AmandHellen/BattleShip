@@ -6,15 +6,17 @@
 #include "ship.h"
 #include "types.h"
 
+typedef struct tile{
+    STATE state;
+    SHIP* ship;
+}TILE;
+
 typedef struct map{
-    SHIP **ships;
     TILE **matrix; // 0 -> EMPTY / 1 -> FILLED / 2 -> ALREADY HIT
 }MAP;
 
 //---------------------------------------------------
-MAP *create_map(SHIP **, TILE **);
-
-TILE **create_empty_map(int);
+MAP *create_map(int);
 
 void free_map(MAP *);
 
@@ -22,28 +24,22 @@ static void map_error(char *);
 
 //---------------------------------------------------
 
-//returns a 2D matrix of TILES (all EMPTY)
-TILE **create_empty_map(int dim){
+//returns a new instance of MAP
+MAP *create_map(int dim){
+    MAP *m = (MAP*)malloc(sizeof(MAP));
+    if(m == NULL){map_error("No memory");}
     TILE **matrix;
-    //allocate memory for the 2D matrix
-    matrix = malloc(sizeof(TILE*)*dim);
+    //allocate memory for a 2D matrix
+    matrix = (TILE**)malloc(sizeof(TILE*)*dim*dim);
     for(int i=0; i<dim; i++){
-        matrix[i] = malloc(sizeof(TILE*)*dim);
+        matrix[i] = (TILE*)malloc(sizeof(TILE)*dim);
     }
     //initialize all the positions as EMPTY
     for(int i=0; i<dim; i++){
         for(int j=0; j<dim; j++){
-            matrix[i][j] = EMPTY;
+            matrix[i][j].state = EMPTY;
         }
     }
-    return matrix;
-}
-
-//returns a new instance of MAP
-MAP *create_map(SHIP **ships, TILE **matrix){
-    MAP *m = (MAP*)malloc(sizeof(MAP));
-    if(m == NULL){map_error("No memory");}
-    m -> ships = ships;
     m -> matrix = matrix;
     return m;
 }
@@ -52,13 +48,6 @@ MAP *create_map(SHIP **ships, TILE **matrix){
 void free_map(MAP *m){
     if(m != NULL){
         int i = 0;
-        while(m->ships[i] != NULL){
-            free(m->ships[i]);
-            i++;
-        }
-        free(m->ships);
-
-        i = 0;
         while(m->matrix[i] != NULL){
             free(m->matrix[i]);
             i++;

@@ -1,13 +1,14 @@
 #include "map.h"
 
 int main(){
-    int dim = 10;
-    TILE **matrix = create_empty_map(dim);
+    int dim = 20;
+    MAP *m = create_map(dim);
     for(int i=0; i<dim; i++){
         for(int j=0; j<dim; j++){
-            printf("%d ",matrix[i][j]);
+            printf("%d ",m -> matrix[i][j].state);
         }
         printf("\n");
     }
+    free_map(m);
     return 0;
 }

@@ -55,7 +55,7 @@ int set_size(SHIP *s, COORD begin, COORD end){
     }
 }
 
-// set the SHIP direction and calculate the size 
+// set the SHIP direction and calculate the size
 static int calculate_size(SHIP *s, COORD begin, COORD end){
     if(begin.x == end.x){ //Vertical
         s -> dir = VERTICAL;
