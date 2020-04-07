@@ -25,7 +25,7 @@ bool place_ship(SHIP *, TILE **);
 
 void free_player(PLAYER *);
 
-static void player_error(char *);
+void player_error(char *);
 
 //-----------------------------------------------------
 

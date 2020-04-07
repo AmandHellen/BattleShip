@@ -9,7 +9,7 @@ PLAYER *create_player(int dim, int n_ships, MODE mode, bool playing){
     p -> n_ships = n_ships;
     p -> playing = playing;
     return p;*/
-}
+}   
 
 /*
 keep generating ships (or asking for them) and placing them on the 2D matrix
@@ -91,7 +91,7 @@ void free_player(PLAYER *p){
 }
 
 // Call this when there is a memory related error
-static void player_error(char *msg){
+void player_error(char *msg){
     fprintf(stderr,"Error: %s.\n",msg);
     exit(EXIT_FAILURE);
 }
