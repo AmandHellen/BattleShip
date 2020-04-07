@@ -5,25 +5,23 @@
 #include <stdlib.h>
 #include "types.h"
 
+#define BMAP_SIZE 25
+
 typedef struct ship{
-    COORD begin, end;
     int size;
     int hits;   // how many attacks suffered
     bool sunk; // FALSE -> alive / TRUE -> dead
-    DIR dir;    // 0 -> HORIZONTAL / 1 -> VERTICAL
 }SHIP;
 
 //--------------------------------------------------------------
 
-SHIP *create_ship(COORD, COORD);
+SHIP *create_ship(char *);
 
-int set_size(SHIP *, COORD, COORD);
-
-static int calculate_size(SHIP *, COORD, COORD);
+int calculate_size(char *);
 
 void free_ship(SHIP *);
 
-static void ship_error(char *);
+void ship_error(char *);
 
 //---------------------------------------------------------------
 
