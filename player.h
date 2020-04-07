@@ -17,11 +17,13 @@ typedef struct player{
 //-----------------------------------------------------
 PLAYER *create_player(int, int, int *, MODE, bool);
 
-bool valid_position(char *, int, int, int, int, int, char *, MAP *, int);
+bool valid_position(char *, int, int, int, int, int, char *, MAP *);
 
-MAP *fill_map(MAP *, int, MODE, int);
+MAP *fill_map(MAP *, int, MODE);
 
-bool place_ship(char *, MAP *, char *, int, int, int, int);
+bool place_ship(char *, MAP *, char *, int, int, int);
+
+void print_dashboard(PLAYER *);
 
 void free_player(PLAYER *);
 

@@ -39,8 +39,7 @@ start_game:
 		}
 
 		PLAYER *p1 = create_player(dim, n_ships, game_shapes, MANUAL, true);
-
-
+		print_dashboard(p1);
 	}
 	else{ // INVALID
 		printf("Invalid option. Try again.\n");

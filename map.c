@@ -4,6 +4,7 @@
 MAP *create_map(int dim){
     MAP *m = (MAP*)malloc(sizeof(MAP));
     if(m == NULL){map_error("No memory");}
+    m -> dim = dim;
     TILE *matrix;
     //allocate memory for a 2D matrix
     matrix = (TILE*)malloc(sizeof(TILE)*dim*dim);
@@ -15,6 +16,15 @@ MAP *create_map(int dim){
     }
     m -> matrix = matrix;
     return m;
+}
+
+void print_map(MAP* m){
+    for(int i=0; i< m -> dim; i++){
+        for(int j=0; j< m -> dim; j++){
+            printf("%d ",m -> matrix[i* m -> dim + j].state);
+        }
+        printf("\n");
+    }
 }
 
 // Destroy the structure

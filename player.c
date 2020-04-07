@@ -5,14 +5,15 @@ PLAYER *create_player(int dim, int n_ships, int *game_shapes, MODE mode, bool pl
     PLAYER *p = (PLAYER*)malloc(sizeof(PLAYER));
     if(p == NULL){player_error("No memory");}
     MAP *empty_map = create_map(dim);
-    p -> map = fill_map(empty_map, n_ships, mode, dim);
+    p -> map = fill_map(empty_map, n_ships, mode);
     p -> n_ships = n_ships;
     p -> playing = playing;
     return p;
 }   
 
-bool valid_position(char *shape, int curr_rot, int old_x, int old_y, int new_x, int new_y, char *map_repr, MAP *map, int dim)
+bool valid_position(char *shape, int curr_rot, int old_x, int old_y, int new_x, int new_y, char *map_repr, MAP *map)
 {
+    int dim = map -> dim;
     int old_pos;
     for (int i = 0; i < BMAP_SIZE; i++)
         for (int j = 0; j < BMAP_SIZE; j++)
@@ -38,8 +39,9 @@ bool valid_position(char *shape, int curr_rot, int old_x, int old_y, int new_x, 
 keep generating ships (or asking for them) and placing them on the 2D matrix
 return a new instance of MAP with that matrix
 */
-MAP *fill_map(MAP *map, int n_ships, MODE mode, int dim){
+MAP *fill_map(MAP *map, int n_ships, MODE mode){
     // Game Logic
+    int dim = map -> dim;
     char key_press;
     int old_x, old_y;
     int curr_rot = 0;
@@ -102,22 +104,22 @@ MAP *fill_map(MAP *map, int n_ships, MODE mode, int dim){
 
         switch(tolower(key_press)){
             case 'w':
-                curr_y -= (valid_position(nCurrentPiece, curr_rot, curr_x, curr_y, curr_x, curr_y - 1, map_repr, map, dim)) ? 1 : 0;
+                curr_y -= (valid_position(nCurrentPiece, curr_rot, curr_x, curr_y, curr_x, curr_y - 1, map_repr, map)) ? 1 : 0;
                 break;
             case 's':
-                curr_y += (valid_position(nCurrentPiece, curr_rot, curr_x, curr_y, curr_x, curr_y + 1, map_repr, map, dim)) ? 1 : 0;
+                curr_y += (valid_position(nCurrentPiece, curr_rot, curr_x, curr_y, curr_x, curr_y + 1, map_repr, map)) ? 1 : 0;
                 break;
             case 'd':
-                curr_x += (valid_position(nCurrentPiece, curr_rot, curr_x, curr_y, curr_x + 1, curr_y, map_repr, map, dim)) ? 1 : 0;
+                curr_x += (valid_position(nCurrentPiece, curr_rot, curr_x, curr_y, curr_x + 1, curr_y, map_repr, map)) ? 1 : 0;
                 break;
             case 'a':
-                curr_x -= (valid_position(nCurrentPiece, curr_rot, curr_x, curr_y, curr_x - 1, curr_y, map_repr, map, dim)) ? 1 : 0;
+                curr_x -= (valid_position(nCurrentPiece, curr_rot, curr_x, curr_y, curr_x - 1, curr_y, map_repr, map)) ? 1 : 0;
                 break;
            case 'r':
-                curr_rot += (valid_position(nCurrentPiece, curr_rot + 1, curr_x, curr_y, curr_x, curr_y, map_repr, map, dim)) ? 1 : 0;
+                curr_rot += (valid_position(nCurrentPiece, curr_rot + 1, curr_x, curr_y, curr_x, curr_y, map_repr, map)) ? 1 : 0;
                 break;
             case 32:
-                if(!place_ship(nCurrentPiece, map, map_repr, curr_x, curr_y, curr_rot, dim)){
+                if(!place_ship(nCurrentPiece, map, map_repr, curr_x, curr_y, curr_rot)){
                     printf("You can't put the ship here!\n");
                 }
                 fflush(stdin);
@@ -147,7 +149,8 @@ MAP *fill_map(MAP *map, int n_ships, MODE mode, int dim){
 }
 
 // checks the matrix for collisions and place the ship if there's none (POR ACABAR)
-bool place_ship(char *shape, MAP *map, char *map_repr, int curr_x, int curr_y, int curr_rot, int dim){
+bool place_ship(char *shape, MAP *map, char *map_repr, int curr_x, int curr_y, int curr_rot){
+    int dim = map -> dim;
     for (int i = 0; i < BMAP_SIZE; i++){
         for (int j = 0; j < BMAP_SIZE; j++){
             if ((map->matrix[(curr_y + i)*dim + (curr_x + j)].state == FILLED) && (shape[rotate_point(i, j, curr_rot)] != '.')){
@@ -166,6 +169,11 @@ bool place_ship(char *shape, MAP *map, char *map_repr, int curr_x, int curr_y, i
     }
 
     return true;
+}
+
+void print_dashboard(PLAYER *p){
+    print_map(p -> map);
+    printf("Remaining Ships: %d\n",p -> n_ships);
 }
 
 // Destroys the structure

@@ -19,16 +19,7 @@ typedef struct ship{
 }SHIP;
 
 //	all possible shapes 
-SHAPE shapes[NSHAPES] = {{"XXXXX..X....X....X....X..\0"},
-					     {"..X....X....X....X....X..\0"},
-					     {"....X....XXXXXXX....X....\0"},
-			   		     {"..X....X....XXX..X....X..\0"},
-					     {".......X....X....X.......\0"},
-					     {"X....X....X....X....XXXXX\0"},
-					     {"X...XX...XX...XX...XXXXXX\0"},
-					     {"X...XX...XXXXXXX...XX...X\0"},
-					     {"XXXXX...X...X...X...XXXXX\0"}
-						};
+extern SHAPE shapes[NSHAPES];
 
 //--------------------------------------------------------------
 
