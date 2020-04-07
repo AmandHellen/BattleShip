@@ -12,7 +12,7 @@ typedef struct tile{
 }TILE;
 
 typedef struct map{
-    TILE **matrix; // 0 -> EMPTY / 1 -> FILLED / 2 -> ALREADY HIT
+    TILE *matrix; // 0 -> EMPTY / 1 -> FILLED / 2 -> ALREADY HIT
 }MAP;
 
 //---------------------------------------------------
@@ -20,7 +20,7 @@ MAP *create_map(int);
 
 void free_map(MAP *);
 
-static void map_error(char *);
+void map_error(char *);
 
 //---------------------------------------------------
 
