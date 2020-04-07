@@ -36,6 +36,8 @@ SHIP *create_ship(char *);
 
 int calculate_size(char *);
 
+int rotate_point(int, int, int);
+
 void free_ship(SHIP *);
 
 void ship_error(char *);
