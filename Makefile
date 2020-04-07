@@ -15,6 +15,6 @@ test_player:
 	gcc -Wall test_player.c -o test_player -L. -lbattleship 
 	./test_player
 
-test_game:
+game:
 	gcc -Wall game.c -o battleship -L. -lbattleship
 	./battleship

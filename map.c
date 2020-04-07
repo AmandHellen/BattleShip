@@ -19,9 +19,25 @@ MAP *create_map(int dim){
 }
 
 void print_map(MAP* m){
+    printf("  ");
+    for (int i = 0; i < m -> dim; i++)
+        printf("%.2d ", i);
+    printf("\n");
     for(int i=0; i< m -> dim; i++){
+        printf("%.2d", i);
         for(int j=0; j< m -> dim; j++){
-            printf("%d ",m -> matrix[i* m -> dim + j].state);
+            STATE pos = m -> matrix[i * m->dim + j].state;
+            switch(pos){
+                case EMPTY:
+                    printf(" . ");
+                    break;
+                case FILLED:
+                    printf(" O ");
+                    break;
+                case HIT:
+                    printf(" X ");
+                    break;
+            }
         }
         printf("\n");
     }

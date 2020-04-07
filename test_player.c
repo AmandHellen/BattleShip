@@ -9,6 +9,6 @@ int main(){
 			game_shapes[i] = rand() % 9;
 		}
 	PLAYER *p1 = create_player(20, n_ships, game_shapes, MANUAL, true);
-
+	//print_dashboard(p1);
 	return 0;
 }

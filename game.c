@@ -31,7 +31,7 @@ start_game:
 	}
 	else if(mode==1){ // MANUAL
 		scanf("%d",&dim);
-		n_ships = dim*dim / BMAP_SIZE;
+		n_ships = dim*dim / BMAP_SIZE*BMAP_SIZE;
 
 		int game_shapes[n_ships];
 		for(int i=0; i<n_ships; i++){

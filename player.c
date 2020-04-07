@@ -48,7 +48,9 @@ MAP *fill_map(MAP *map, int n_ships, MODE mode){
     int curr_x = dim / 2;
     int curr_y = 0;
     char nCurrentPiece[BMAP_SIZE*BMAP_SIZE+1] = {"..X....X....X....X....X..\0"};
-    char map_repr[dim*dim+1]; // Create play field buffer
+    //char map_repr[dim*dim+1]; // Create play field buffer
+
+    char *map_repr = (char*)malloc(sizeof(char)*dim*dim+1);
 
     for (int i = 0; i < dim; i++){
         for (int j = 0; j < dim; j++){
@@ -99,6 +101,7 @@ MAP *fill_map(MAP *map, int n_ships, MODE mode){
         }
 
         // Input ========================
+        fflush(stdin);
         scanf("%c", &key_press);
         getchar();
 
@@ -115,7 +118,7 @@ MAP *fill_map(MAP *map, int n_ships, MODE mode){
             case 'a':
                 curr_x -= (valid_position(nCurrentPiece, curr_rot, curr_x, curr_y, curr_x - 1, curr_y, map_repr, map)) ? 1 : 0;
                 break;
-           case 'r':
+            case 'r':
                 curr_rot += (valid_position(nCurrentPiece, curr_rot + 1, curr_x, curr_y, curr_x, curr_y, map_repr, map)) ? 1 : 0;
                 break;
             case 32:
@@ -145,6 +148,7 @@ MAP *fill_map(MAP *map, int n_ships, MODE mode){
         old_x = curr_x;
         old_y = curr_y;
     }
+    free(map_repr);
     return map;
 }
 

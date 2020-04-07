@@ -23,7 +23,7 @@ SHIP *create_ship(char *bitmap){
 
 int calculate_size(char *bitmap){
     int size = 0;
-    for(int i=0; i < BMAP_SIZE; i++){
+    for(int i=0; i < BMAP_SIZE*BMAP_SIZE; i++){
         if(bitmap[i] == 'X') size++;
     }
     return size;

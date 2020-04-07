@@ -5,11 +5,11 @@
 #include <stdlib.h>
 #include "types.h"
 
-#define BMAP_SIZE 25 // a bitmap is always a 5x5 matrix
+#define BMAP_SIZE 5 // a bitmap is always a 5x5 matrix
 #define NSHAPES 9	 // number of different ship shapes
 
 typedef struct shape{	// a struct containing a bitmap 
-	char bitmap[BMAP_SIZE+1];
+	char bitmap[BMAP_SIZE*BMAP_SIZE+1];
 }SHAPE;
 
 typedef struct ship{
