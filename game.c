@@ -1,6 +1,5 @@
 #include "game.h"
 
-
 int random_bitmap(){
 	return rand() % NSHAPES;
 }
@@ -21,8 +20,7 @@ int main(){
 	int dim;	// map dimension (dim * dim)
 	int n_ships; // number of ships to be placed 	
 	int mode;	// 0 -> RANDOM / 1 -> MANUAL
-	bool finished = false;
-	
+	bool finished = false;	
 
 start_game:
 	printf("Select the map generation mode:\n0 -> RANDOM\n1 -> MANUAL\n>> ");
@@ -33,7 +31,16 @@ start_game:
 	}
 	else if(mode==1){ // MANUAL
 		scanf("%d",&dim);
-		n_ships = dim*dim / BMAP_SIZE;		
+		n_ships = dim*dim / BMAP_SIZE;
+
+		int game_shapes[n_ships];
+		for(int i=0; i<n_ships; i++){
+			game_shapes[i] = random_bitmap();
+		}
+
+		PLAYER *p1 = create_player(dim, n_ships, game_shapes, MANUAL, true);
+
+
 	}
 	else{ // INVALID
 		printf("Invalid option. Try again.\n");
@@ -42,20 +49,13 @@ start_game:
 	
 
 /*
-	int game_shapes[n_ships];
-	for(int i=0; i<n_ships; i++){
-		game_shapes[i] = random_bitmap();
-	}
-*/
-
-/*
 	for(int i=0; i<n_ships; i++){
 		int shape = game_shapes[i];
 		print_shape(bitmaps[shape].bitmap);
 	}*/
 
 
-	//PLAYER *p1 = create_player(dim,n_ships,MANUAL,true);
+	
 //	print_map(p1.map);
 	return 0;
 

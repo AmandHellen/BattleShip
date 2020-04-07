@@ -15,13 +15,13 @@ typedef struct player{
 }PLAYER;
 
 //-----------------------------------------------------
-PLAYER *create_player(int, int, MODE, bool);
+PLAYER *create_player(int, int, int *, MODE, bool);
 
-MAP *fill_map(TILE **, int, MODE);
+bool valid_position(char *, int, int, int, int, int, char *, MAP *, int);
 
-SHIP *get_ship(void);
+MAP *fill_map(MAP *, int, MODE, int);
 
-bool place_ship(SHIP *, TILE **);
+bool place_ship(char *, MAP *, char *, int, int, int, int);
 
 void free_player(PLAYER *);
 

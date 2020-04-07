@@ -2,6 +2,7 @@
 #define TYPES_H
 
 #include <stdbool.h>
+#include <ctype.h>
 
 typedef enum {RANDOM, MANUAL} MODE; // ship creation mode
 
