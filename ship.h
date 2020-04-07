@@ -9,7 +9,7 @@ typedef struct ship{
     COORD begin, end;
     int size;
     int hits;   // how many attacks suffered
-    BOOL sunk; // FALSE -> alive / TRUE -> dead
+    bool sunk; // FALSE -> alive / TRUE -> dead
     DIR dir;    // 0 -> HORIZONTAL / 1 -> VERTICAL
 }SHIP;
 

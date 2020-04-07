@@ -1,7 +1,7 @@
 #ifndef TYPES_H
 #define TYPES_H
 
-typedef enum {FALSE, TRUE} BOOL;
+#include <stdbool.h>
 
 typedef enum {RANDOM, MANUAL} MODE; // ship creation mode
 
