@@ -1,7 +1,7 @@
 #include "player.h"
 
 // returns a new instance of PLAYER
-PLAYER *create_player(int dim, int n_ships, MODE mode, BOOL playing){
+PLAYER *create_player(int dim, int n_ships, MODE mode, bool playing){
     /*PLAYER *p = (PLAYER*)malloc(sizeof(PLAYER));
     if(p == NULL){player_error("No memory");}
     TILE **empty_map = create_empty_map(dim);
@@ -9,7 +9,7 @@ PLAYER *create_player(int dim, int n_ships, MODE mode, BOOL playing){
     p -> n_ships = n_ships;
     p -> playing = playing;
     return p;*/
-}
+}   
 
 /*
 keep generating ships (or asking for them) and placing them on the 2D matrix
@@ -17,7 +17,7 @@ return a new instance of MAP with that matrix
 */
 MAP *fill_map(TILE **empty_map, int n_ships, MODE mode){
     SHIP *ships[n_ships];
-    BOOL placed;    // if the ship is successfully placed
+    bool placed;    // if the ship is successfully placed
     SHIP *new_ship;
     for(int i=0; i<n_ships; i++){
         input_ship:
@@ -64,7 +64,7 @@ SHIP *get_ship(void){
 }
 
 // checks the matrix for collisions and place the ship if there's none (POR ACABAR)
-BOOL place_ship(SHIP *s, TILE **matrix){
+bool place_ship(SHIP *s, TILE **matrix){
     if (s -> dir == HORIZONTAL){
         for(int i=0; i<s -> size; i++){
             if (matrix[s -> begin.x][i] == 0){
@@ -91,7 +91,7 @@ void free_player(PLAYER *p){
 }
 
 // Call this when there is a memory related error
-static void player_error(char *msg){
+void player_error(char *msg){
     fprintf(stderr,"Error: %s.\n",msg);
     exit(EXIT_FAILURE);
 }
