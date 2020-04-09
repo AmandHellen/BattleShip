@@ -45,6 +45,32 @@ bool valid_position(char *shape, int curr_rot, int old_x, int old_y, int new_x, 
     return true;
 }
 
+void draw_ship(char *curr_bmap, MAP *map, char *map_repr, int old_x, int old_y, int curr_x, int curr_y, int curr_rot){
+    int dim = map -> dim;
+    for (int i = 0; i < BMAP_SIZE; i++)
+        for (int j = 0; j < BMAP_SIZE; j++)
+            if (curr_bmap[rotate_point(i, j, curr_rot)] != '.'){
+                map_repr[(curr_y + i)*dim + (curr_x + j)] = 'X';
+                if(map->matrix[(old_y + i)*dim + (old_x + j)].state == FILLED)
+                    map_repr[(old_y + i)*dim + (old_x + j)] = 'O';
+                }
+}
+
+void draw_field(char *map_repr, int dim){
+    printf("  ");
+        for (int i = 0; i < dim; i++)
+            printf("%.2d ", i);
+
+        printf("\n");
+        for (int i = 0; i < dim; i++){
+            printf("%.2d", i);
+            for (int j = 0; j < dim; j++){
+                printf(" %c ",map_repr[i*dim + j]);
+            }
+            printf("\n");
+        }
+}
+
 /*
 keep generating ships (or asking for them) and placing them on the 2D matrix
 return a new instance of MAP with that matrix
@@ -60,13 +86,8 @@ MAP *fill_map(MAP *map, int n_ships, int *game_shapes, MODE mode){
 
     int shape_ind = 0;
     char *curr_bmap = shapes[game_shapes[shape_ind]].bitmap;
-    //char nCurrentPiece[BMAP_SIZE*BMAP_SIZE+1] = {"..X....X....X....X....X..\0"};
-    //char map_repr[dim*dim+1]; // Create play field buffer
 
     char *map_repr = (char*)malloc(sizeof(char)*dim*dim+1);
-
-
-    printf("N SHIPS: %d\n",n_ships);
 
     for (int i = 0; i < dim; i++){
         for (int j = 0; j < dim; j++){
@@ -75,51 +96,16 @@ MAP *fill_map(MAP *map, int n_ships, int *game_shapes, MODE mode){
     }
     map_repr[dim*dim] = '\0';
 
-    // Place ship on the map
-    for (int i = 0; i < BMAP_SIZE; i++){
-        for (int j = 0; j < BMAP_SIZE; j++){
-            if (curr_bmap[i * BMAP_SIZE + j] != '.')
-                map_repr[(curr_y + i)*dim + (curr_x + j)] = 'X';
-        }
-    }
+    draw_ship(curr_bmap, map, map_repr, old_x, old_y, curr_x, curr_y, curr_rot);
 
     old_x = curr_x;
     old_y = curr_y;
-
 
     getchar();  // clear input buffer 
 
     while (shape_ind < n_ships) // Main Loop
     {
-        // Draw Field
-        printf("  ");
-        for (int i = 0; i < dim; i++)
-            printf("%.2d ", i);
-
-        printf("\n");
-        for (int i = 0; i < dim; i++){
-            printf("%.2d", i);
-            for (int j = 0; j < dim; j++){
-                printf(" %c ",map_repr[i*dim + j]);
-            }
-            printf("\n");
-        }
-
-        // Draw MAP
-      /*  printf("  ");
-        for (int i = 0; i < dim; i++)
-            printf("%.2d ", i);
-
-        printf("\n");
-        for (int i = 0; i < dim; i++){
-            printf("%.2d", i);
-            for (int j = 0; j < dim; j++){
-                printf(" %d ", map->matrix[i*dim + j].state);
-            }
-            printf("\n");
-        }*/
-
-        // Input ========================
+        draw_field(map_repr, dim);
         scanf("%c", &key_press);
         getchar();      // clear input buffer 
 
@@ -149,29 +135,16 @@ MAP *fill_map(MAP *map, int n_ships, int *game_shapes, MODE mode){
                 curr_x = dim / 2;
                 curr_y = 0;
                 fflush(stdin);
+                draw_ship(curr_bmap, map, map_repr, old_x, old_y, curr_x, curr_y, curr_rot);
                 continue;
             default:
                 printf("Invalid key!\n");
         }
-
         fflush(stdin);
-
-        // Display ======================
-
-        // Place ship on the map
-        for (int i = 0; i < BMAP_SIZE; i++)
-            for (int j = 0; j < BMAP_SIZE; j++)
-                if (curr_bmap[rotate_point(i, j, curr_rot)] != '.'){
-                    map_repr[(curr_y + i)*dim + (curr_x + j)] = 'X';
-                    if(map->matrix[(old_y + i)*dim + (old_x + j)].state == FILLED)
-                        map_repr[(old_y + i)*dim + (old_x + j)] = 'O';
-                }
-
+        draw_ship(curr_bmap, map, map_repr, old_x, old_y, curr_x, curr_y, curr_rot);
 
         old_x = curr_x;
         old_y = curr_y;
-
-
     }
     free(map_repr);
     return map;

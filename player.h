@@ -21,6 +21,10 @@ bool valid_position(char *, int, int, int, int, int, char *, MAP *);
 
 int rotate_point(int, int, int);
 
+void draw_ship(char *, MAP *, char *, int, int, int, int, int);
+
+void draw_field(char *, int);
+
 MAP *fill_map(MAP *, int, int *, MODE);
 
 bool place_ship(char *, MAP *, char *, int, int, int);
