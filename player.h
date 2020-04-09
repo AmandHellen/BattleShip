@@ -9,13 +9,11 @@
 
 typedef struct player{
     int n_ships; //remaining ships
-    bool playing; //if it is this players turn or not
     MAP *map;
-    //strategy ?
 }PLAYER;
 
 //-----------------------------------------------------
-PLAYER *create_player(int, int, int *, MODE, bool);
+PLAYER *create_player(int, int, int *, MODE);
 
 bool valid_position(char *, int, int, int, int, int, char *, MAP *);
 

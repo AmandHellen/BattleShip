@@ -12,6 +12,7 @@ MAP *create_map(int dim){
     for(int i=0; i<dim; i++){
         for(int j=0; j<dim; j++){
             matrix[i*dim + j].state = EMPTY;
+            matrix[i*dim + j].ship = NULL;
         }
     }
     m -> matrix = matrix;
