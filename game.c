@@ -21,13 +21,12 @@ start_game:
 		printf("random\n");
 	}
 	else if(mode==1){ // MANUAL
+		printf("Enter the map dimension >> ");
 		scanf("%d",&dim);
 		n_ships = (dim*dim) / (BMAP_SIZE*BMAP_SIZE);
-		printf("%d\n",n_ships);
 		int game_shapes[n_ships];
 		for(int i=0; i<n_ships; i++){
 			game_shapes[i] = random_bitmap();
-			printf("%d\n",game_shapes[i]);
 		}
 
 		PLAYER *p1 = create_player(dim, n_ships, game_shapes, MANUAL, true);
