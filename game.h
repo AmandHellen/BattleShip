@@ -11,9 +11,17 @@
 //-----------------------------------------------------------
 int random_bitmap(void);
 
+COORD input_coord(void);
+
+int attack(COORD , PLAYER *, PLAYER *);
+
+bool check_state(PLAYER *);
+
 void play(PLAYER *, PLAYER *);
 
-COORD input_coord(void);
+void exit_game(PLAYER *, PLAYER *);
+
+void clean_game(PLAYER *, PLAYER *);
 
 //-----------------------------------------------------------
 

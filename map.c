@@ -47,7 +47,13 @@ void print_map(MAP* m){
 
 // Destroy the structure
 void free_map(MAP *m){
+	SHIP *s;
     if(m != NULL){
+    	for(int i = 0; i < m->dim*m->dim; i++){
+    		s = m -> matrix[i].ship;
+    		if(s != NULL)
+    			free(s);
+    	}
         free(m -> matrix);
         free(m);
     }else{
