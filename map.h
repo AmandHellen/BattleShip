@@ -13,10 +13,13 @@ typedef struct tile{
 
 typedef struct map{
     TILE *matrix; // 0 -> EMPTY / 1 -> FILLED / 2 -> ALREADY HIT
+    int dim;
 }MAP;
 
 //---------------------------------------------------
 MAP *create_map(int);
+
+void print_map(MAP*);
 
 void free_map(MAP *);
 
