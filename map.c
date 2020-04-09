@@ -23,6 +23,7 @@ void print_map(MAP* m){
     for (int i = 0; i < m -> dim; i++)
         printf("%.2d ", i);
     printf("\n");
+    
     for(int i=0; i< m -> dim; i++){
         printf("%.2d", i);
         for(int j=0; j< m -> dim; j++){

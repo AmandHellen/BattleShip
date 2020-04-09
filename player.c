@@ -5,11 +5,21 @@ PLAYER *create_player(int dim, int n_ships, int *game_shapes, MODE mode, bool pl
     PLAYER *p = (PLAYER*)malloc(sizeof(PLAYER));
     if(p == NULL){player_error("No memory");}
     MAP *empty_map = create_map(dim);
-    p -> map = fill_map(empty_map, n_ships, mode);
+    p -> map = fill_map(empty_map, n_ships, game_shapes, mode);
     p -> n_ships = n_ships;
     p -> playing = playing;
     return p;
 }   
+
+int rotate_point(int i, int j, int r){
+    switch(r % 4){
+        case 0: return i * BMAP_SIZE + j;
+        case 1: return 20 + i - (j * BMAP_SIZE);
+        case 2: return 24 - (i * BMAP_SIZE) - j;
+        case 3: return 4 - i + (j * BMAP_SIZE);
+    }
+    return 0;
+}
 
 bool valid_position(char *shape, int curr_rot, int old_x, int old_y, int new_x, int new_y, char *map_repr, MAP *map)
 {
@@ -39,7 +49,7 @@ bool valid_position(char *shape, int curr_rot, int old_x, int old_y, int new_x, 
 keep generating ships (or asking for them) and placing them on the 2D matrix
 return a new instance of MAP with that matrix
 */
-MAP *fill_map(MAP *map, int n_ships, MODE mode){
+MAP *fill_map(MAP *map, int n_ships, int *game_shapes, MODE mode){
     // Game Logic
     int dim = map -> dim;
     char key_press;
@@ -47,10 +57,16 @@ MAP *fill_map(MAP *map, int n_ships, MODE mode){
     int curr_rot = 0;
     int curr_x = dim / 2;
     int curr_y = 0;
-    char nCurrentPiece[BMAP_SIZE*BMAP_SIZE+1] = {"..X....X....X....X....X..\0"};
+
+    int shape_ind = 0;
+    char *curr_bmap = shapes[game_shapes[shape_ind]].bitmap;
+    //char nCurrentPiece[BMAP_SIZE*BMAP_SIZE+1] = {"..X....X....X....X....X..\0"};
     //char map_repr[dim*dim+1]; // Create play field buffer
 
     char *map_repr = (char*)malloc(sizeof(char)*dim*dim+1);
+
+
+    printf("N SHIPS: %d\n",n_ships);
 
     for (int i = 0; i < dim; i++){
         for (int j = 0; j < dim; j++){
@@ -62,7 +78,7 @@ MAP *fill_map(MAP *map, int n_ships, MODE mode){
     // Place ship on the map
     for (int i = 0; i < BMAP_SIZE; i++){
         for (int j = 0; j < BMAP_SIZE; j++){
-            if (nCurrentPiece[i * BMAP_SIZE + j] != '.')
+            if (curr_bmap[i * BMAP_SIZE + j] != '.')
                 map_repr[(curr_y + i)*dim + (curr_x + j)] = 'X';
         }
     }
@@ -70,7 +86,10 @@ MAP *fill_map(MAP *map, int n_ships, MODE mode){
     old_x = curr_x;
     old_y = curr_y;
 
-    while (1) // Main Loop
+
+    getchar();  // clear input buffer 
+
+    while (shape_ind < n_ships) // Main Loop
     {
         // Draw Field
         printf("  ");
@@ -87,7 +106,7 @@ MAP *fill_map(MAP *map, int n_ships, MODE mode){
         }
 
         // Draw MAP
-        printf("  ");
+      /*  printf("  ");
         for (int i = 0; i < dim; i++)
             printf("%.2d ", i);
 
@@ -98,33 +117,37 @@ MAP *fill_map(MAP *map, int n_ships, MODE mode){
                 printf(" %d ", map->matrix[i*dim + j].state);
             }
             printf("\n");
-        }
+        }*/
 
         // Input ========================
-        fflush(stdin);
         scanf("%c", &key_press);
-        getchar();
+        getchar();      // clear input buffer 
 
         switch(tolower(key_press)){
             case 'w':
-                curr_y -= (valid_position(nCurrentPiece, curr_rot, curr_x, curr_y, curr_x, curr_y - 1, map_repr, map)) ? 1 : 0;
+                curr_y -= (valid_position(curr_bmap, curr_rot, curr_x, curr_y, curr_x, curr_y - 1, map_repr, map)) ? 1 : 0;
                 break;
             case 's':
-                curr_y += (valid_position(nCurrentPiece, curr_rot, curr_x, curr_y, curr_x, curr_y + 1, map_repr, map)) ? 1 : 0;
+                curr_y += (valid_position(curr_bmap, curr_rot, curr_x, curr_y, curr_x, curr_y + 1, map_repr, map)) ? 1 : 0;
                 break;
             case 'd':
-                curr_x += (valid_position(nCurrentPiece, curr_rot, curr_x, curr_y, curr_x + 1, curr_y, map_repr, map)) ? 1 : 0;
+                curr_x += (valid_position(curr_bmap, curr_rot, curr_x, curr_y, curr_x + 1, curr_y, map_repr, map)) ? 1 : 0;
                 break;
             case 'a':
-                curr_x -= (valid_position(nCurrentPiece, curr_rot, curr_x, curr_y, curr_x - 1, curr_y, map_repr, map)) ? 1 : 0;
+                curr_x -= (valid_position(curr_bmap, curr_rot, curr_x, curr_y, curr_x - 1, curr_y, map_repr, map)) ? 1 : 0;
                 break;
             case 'r':
-                curr_rot += (valid_position(nCurrentPiece, curr_rot + 1, curr_x, curr_y, curr_x, curr_y, map_repr, map)) ? 1 : 0;
+                curr_rot += (valid_position(curr_bmap, curr_rot + 1, curr_x, curr_y, curr_x, curr_y, map_repr, map)) ? 1 : 0;
                 break;
             case 32:
-                if(!place_ship(nCurrentPiece, map, map_repr, curr_x, curr_y, curr_rot)){
+                if(!place_ship(curr_bmap, map, map_repr, curr_x, curr_y, curr_rot)){
                     printf("You can't put the ship here!\n");
                 }
+                shape_ind++;
+                curr_bmap = shapes[game_shapes[shape_ind]].bitmap;
+                curr_rot = 0;
+                curr_x = dim / 2;
+                curr_y = 0;
                 fflush(stdin);
                 continue;
             default:
@@ -138,7 +161,7 @@ MAP *fill_map(MAP *map, int n_ships, MODE mode){
         // Place ship on the map
         for (int i = 0; i < BMAP_SIZE; i++)
             for (int j = 0; j < BMAP_SIZE; j++)
-                if (nCurrentPiece[rotate_point(i, j, curr_rot)] != '.'){
+                if (curr_bmap[rotate_point(i, j, curr_rot)] != '.'){
                     map_repr[(curr_y + i)*dim + (curr_x + j)] = 'X';
                     if(map->matrix[(old_y + i)*dim + (old_x + j)].state == FILLED)
                         map_repr[(old_y + i)*dim + (old_x + j)] = 'O';
@@ -147,6 +170,8 @@ MAP *fill_map(MAP *map, int n_ships, MODE mode){
 
         old_x = curr_x;
         old_y = curr_y;
+
+
     }
     free(map_repr);
     return map;

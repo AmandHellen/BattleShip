@@ -6,8 +6,6 @@ SHAPE shapes[NSHAPES] = {{"XXXXX..X....X....X....X..\0"},
                          {"..X....X....XXX..X....X..\0"},
                          {".......X....X....X.......\0"},
                          {"X....X....X....X....XXXXX\0"},
-                         {"X...XX...XX...XX...XXXXXX\0"},
-                         {"X...XX...XXXXXXX...XX...X\0"},
                          {"XXXXX...X...X...X...XXXXX\0"}
                         };
 
@@ -27,16 +25,6 @@ int calculate_size(char *bitmap){
         if(bitmap[i] == 'X') size++;
     }
     return size;
-}
-
-int rotate_point(int i, int j, int r){
-    switch(r % 4){
-        case 0: return i * BMAP_SIZE + j;
-        case 1: return 20 + i - (j * BMAP_SIZE);
-        case 2: return 24 - (i * BMAP_SIZE) - j;
-        case 3: return 4 - i + (j * BMAP_SIZE);
-    }
-    return 0;
 }
 
 //Destroys the structure

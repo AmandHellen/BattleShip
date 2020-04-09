@@ -19,7 +19,9 @@ PLAYER *create_player(int, int, int *, MODE, bool);
 
 bool valid_position(char *, int, int, int, int, int, char *, MAP *);
 
-MAP *fill_map(MAP *, int, MODE);
+int rotate_point(int, int, int);
+
+MAP *fill_map(MAP *, int, int *, MODE);
 
 bool place_ship(char *, MAP *, char *, int, int, int);
 
