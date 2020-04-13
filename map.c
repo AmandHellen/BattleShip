@@ -39,6 +39,9 @@ void print_map(MAP* m){
                 case HIT:
                     printf(" X ");
                     break;
+                case MISS:
+                    printf(" . ");
+                    break;
             }
         }
         printf("\n");

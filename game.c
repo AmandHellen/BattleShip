@@ -29,7 +29,7 @@ int attack(COORD c, PLAYER *curr, PLAYER *adv){
 		case EMPTY:
 			printf("You missed!\n");
 			adv->map->matrix[pos].state = MISS;
-			break;
+			return 0;
 		case FILLED:
 			printf("HIT!\n");
 			adv->map->matrix[pos].state = HIT;
@@ -61,13 +61,16 @@ void play(PLAYER *p1, PLAYER *p2){
 
 	while(!finished){
 input_attack: 
-		print_map(curr_player->map);
+		print_dashboard(curr_player);
+		print_map(other_player->map);
+		printf("\nNow playing: %s", curr_player->name);
 		c = input_coord();
-		if(attack(c, p1, p2) == 1){
+		int attack_result = attack(c, curr_player, other_player); 
+		if( attack_result == 1){
 			finished = check_state(other_player);
-			if(finished)
-				continue;
-		}else goto input_attack;
+			if(finished) continue;
+		}else if(attack_result == -1)
+			goto input_attack;
 
 		aux_player = curr_player;
 		curr_player = other_player;
@@ -93,6 +96,7 @@ int main(){
 	int dim;	// map dimension (dim * dim)
 	int n_ships; // number of ships to be placed 	
 	int mode;	// 0 -> RANDOM / 1 -> MANUAL
+	//size_t s_len;
 	char name[NAME_LEN];
 	
 	srand ( time(NULL) );	// seed the random number generator 
@@ -116,10 +120,14 @@ start_game:
 
 		printf("Player 1: type your name >> ");
 		fgets(name, NAME_LEN, stdin);
+		//s_len = strlen(name) - 1;
+		//name[s_len] = '\0'; 
 		printf("%s: place your ships!\n", name);
 		PLAYER *p1 = create_player(name, dim, n_ships, game_shapes, MANUAL);
 		printf("Player 2: type your name >> ");
 		fgets(name, NAME_LEN, stdin);
+		//s_len = strlen(name) - 1;
+		//name[s_len] = '\0';
 		printf("%s: place your ships!\n", name);
 		PLAYER *p2 = create_player(name, dim, n_ships, game_shapes, MANUAL);
 		

@@ -1,13 +1,10 @@
 #include "ship.h"
 
-SHAPE shapes[NSHAPES] = {{"XXXXX..X....X....X....X..\0"},
+SHAPE shapes[NSHAPES] = {//{"XXXXX..X....X....X....X..\0"},
                          {"..X....X....X....X....X..\0"},
-                         {"....X....XXXXXXX....X....\0"},
-                         {"..X....X....XXX..X....X..\0"},
+                        // {"..X....X....XXX..X....X..\0"},
                          {".......X....X....X.......\0"},
-                         {"X....X....X....X....XXXXX\0"},
-                         {"XXXXX...X...X...X...XXXXX\0"}
-                        };
+                         {"............X............\0"}};
 
 // returns a new instance of SHIP or NULL if the coordinates are illegal (diagonal)
 SHIP *create_ship(char *bitmap){

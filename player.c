@@ -101,8 +101,6 @@ MAP *fill_map(MAP *map, int n_ships, int *game_shapes, MODE mode){
     old_x = curr_x;
     old_y = curr_y;
 
-    getchar();  // clear input buffer 
-
     while (shape_ind < n_ships) // Main Loop
     {
         draw_field(map_repr, dim);
