@@ -1,21 +1,15 @@
 #include "ship.h"
 
 void print_ship_info(SHIP *s){
-    printf("Beginning: (%d,%d)\nEnd: (%d,%d)\n",s -> begin.x, s -> begin.y, s -> end.x, s -> end.y);
     printf("Hits: %d\nSize: %d\n",s -> hits, s -> size);
-    if(s -> sunk == FALSE){printf("Is sunk?: FALSE\n");}
+    if(s -> sunk == false){printf("Is sunk?: FALSE\n");}
     else{printf("Is sunk?: TRUE\n");}
 }
 
 int main(){
-    COORD begin, end;
-    begin.x = 3;
-    begin.y = 3;
-    end.x = 3;
-    end.y = 10;
-    SHIP *s = create_ship(begin, end);
+    char bitmap[BMAP_SIZE + 1] = {"XXXXX..X....X....X....X..\0"};
+    SHIP *s = create_ship(bitmap);
     print_ship_info(s);
     free_ship(s);
-    //print_ship_info(s);
     return 0;
 }

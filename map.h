@@ -6,29 +6,27 @@
 #include "ship.h"
 #include "types.h"
 
+typedef struct tile{
+    STATE state;
+    SHIP* ship;
+}TILE;
+
 typedef struct map{
+    TILE *matrix; // 0 -> EMPTY / 1 -> FILLED / 2 -> ALREADY HIT
     int dim;
-    SHIP **ships;
 }MAP;
 
 //---------------------------------------------------
-static void map_exit_error(char *);
+MAP *create_map(int);
+
+void print_map(MAP*);
 
 void free_map(MAP *);
 
-//---------------------------------------------------
-static void map_exit_error(char *msg){
-    fprintf(stderr,"Error: %s.\n",msg);
-    exit(EXIT_FAILURE);
-}
+void map_error(char *);
 
-void free_map(MAP *m){
-    if(m != NULL){
-        free(m -> ships);
-        free(m);
-    }else{
-        map_exit_error("The map was badly generated.");
-    }
-}
+//---------------------------------------------------
+
+
 
 #endif

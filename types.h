@@ -1,12 +1,15 @@
 #ifndef TYPES_H
 #define TYPES_H
 
-typedef enum {FALSE,TRUE} BOOL;
+#include <stdbool.h>
+#include <ctype.h>
 
-typedef enum {RANDOM, MANUAL} MODE;
+typedef enum {RANDOM, MANUAL} MODE; // ship creation mode
+
+typedef enum {EMPTY, FILLED, HIT, MISS} STATE; // status of each matrix cell
 
 typedef struct coord{
-    int x, y;
+	int i, j;
 }COORD;
 
 #endif
