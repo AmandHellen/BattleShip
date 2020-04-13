@@ -6,6 +6,10 @@
 
 typedef enum {RANDOM, MANUAL} MODE; // ship creation mode
 
-typedef enum {EMPTY, FILLED, HIT} STATE; // status of each matrix cell
+typedef enum {EMPTY, FILLED, HIT, MISS} STATE; // status of each matrix cell
+
+typedef struct coord{
+	int i, j;
+}COORD;
 
 #endif

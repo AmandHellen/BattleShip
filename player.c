@@ -1,13 +1,13 @@
 #include "player.h"
 
 // returns a new instance of PLAYER
-PLAYER *create_player(int dim, int n_ships, int *game_shapes, MODE mode, bool playing){
+PLAYER *create_player(char *name, int dim, int n_ships, int *game_shapes, MODE mode){
     PLAYER *p = (PLAYER*)malloc(sizeof(PLAYER));
     if(p == NULL){player_error("No memory");}
+    memcpy(p -> name,   name, NAME_LEN);
     MAP *empty_map = create_map(dim);
     p -> map = fill_map(empty_map, n_ships, game_shapes, mode);
     p -> n_ships = n_ships;
-    p -> playing = playing;
     return p;
 }   
 
@@ -101,8 +101,6 @@ MAP *fill_map(MAP *map, int n_ships, int *game_shapes, MODE mode){
     old_x = curr_x;
     old_y = curr_y;
 
-    getchar();  // clear input buffer 
-
     while (shape_ind < n_ships) // Main Loop
     {
         draw_field(map_repr, dim);
@@ -128,7 +126,7 @@ MAP *fill_map(MAP *map, int n_ships, int *game_shapes, MODE mode){
             case 32:
                 if(!place_ship(curr_bmap, map, map_repr, curr_x, curr_y, curr_rot)){
                     printf("You can't put the ship here!\n");
-                }
+                }                
                 shape_ind++;
                 curr_bmap = shapes[game_shapes[shape_ind]].bitmap;
                 curr_rot = 0;
@@ -153,9 +151,12 @@ MAP *fill_map(MAP *map, int n_ships, int *game_shapes, MODE mode){
 // checks the matrix for collisions and place the ship if there's none (POR ACABAR)
 bool place_ship(char *shape, MAP *map, char *map_repr, int curr_x, int curr_y, int curr_rot){
     int dim = map -> dim;
+    SHIP *s = create_ship(shape);
+
     for (int i = 0; i < BMAP_SIZE; i++){
         for (int j = 0; j < BMAP_SIZE; j++){
             if ((map->matrix[(curr_y + i)*dim + (curr_x + j)].state == FILLED) && (shape[rotate_point(i, j, curr_rot)] != '.')){
+                free_ship(s);
                 return false;
             }
         }
@@ -165,6 +166,7 @@ bool place_ship(char *shape, MAP *map, char *map_repr, int curr_x, int curr_y, i
         for (int j = 0; j < BMAP_SIZE; j++){
             if (shape[rotate_point(i, j, curr_rot)] != '.'){
                 map->matrix[(curr_y + i)*dim + (curr_x + j)].state = FILLED;
+                map->matrix[(curr_y + i)*dim + (curr_x + j)].ship = s;
                 map_repr[(curr_y + i)*dim + (curr_x + j)] = 'O';
             }
         }

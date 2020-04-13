@@ -3,19 +3,21 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "types.h"
 #include "map.h"
 #include "ship.h"
 
+#define NAME_LEN 16
+
 typedef struct player{
     int n_ships; //remaining ships
-    bool playing; //if it is this players turn or not
     MAP *map;
-    //strategy ?
+    char name[NAME_LEN];
 }PLAYER;
 
 //-----------------------------------------------------
-PLAYER *create_player(int, int, int *, MODE, bool);
+PLAYER *create_player(char *,int, int, int *, MODE);
 
 bool valid_position(char *, int, int, int, int, int, char *, MAP *);
 

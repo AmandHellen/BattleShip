@@ -12,6 +12,7 @@ MAP *create_map(int dim){
     for(int i=0; i<dim; i++){
         for(int j=0; j<dim; j++){
             matrix[i*dim + j].state = EMPTY;
+            matrix[i*dim + j].ship = NULL;
         }
     }
     m -> matrix = matrix;
@@ -38,6 +39,9 @@ void print_map(MAP* m){
                 case HIT:
                     printf(" X ");
                     break;
+                case MISS:
+                    printf(" . ");
+                    break;
             }
         }
         printf("\n");
@@ -46,7 +50,13 @@ void print_map(MAP* m){
 
 // Destroy the structure
 void free_map(MAP *m){
+	SHIP *s;
     if(m != NULL){
+    	for(int i = 0; i < m->dim*m->dim; i++){
+    		s = m -> matrix[i].ship;
+    		if(s != NULL)
+    			free(s);
+    	}
         free(m -> matrix);
         free(m);
     }else{
