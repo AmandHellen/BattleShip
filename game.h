@@ -9,7 +9,6 @@
 #include "ship.h"
 
 //-----------------------------------------------------------
-int random_bitmap(void);
 
 COORD input_coord(void);
 
@@ -22,6 +21,8 @@ void play(PLAYER *, PLAYER *);
 void exit_game(PLAYER *, PLAYER *);
 
 void clean_game(PLAYER *, PLAYER *);
+
+void input_players(PLAYER **, PLAYER **, int, int, int *, MODE);
 
 //-----------------------------------------------------------
 

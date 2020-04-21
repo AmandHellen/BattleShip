@@ -6,6 +6,9 @@
 #include "ship.h"
 #include "types.h"
 
+#define MIN_DIM 10 
+#define MAX_DIM 40
+
 typedef struct tile{
     STATE state;
     SHIP* ship;

@@ -1,9 +1,5 @@
 #include "game.h"
 
-int random_bitmap(){
-	return rand() % NSHAPES;
-}
-
 COORD input_coord(){
 	COORD c;
 
@@ -78,7 +74,7 @@ input_attack:
 		
 	}
 
-	exit_game(curr_player, other_player);
+	exit_game(p1, p2);
 }
 
 void exit_game(PLAYER *curr, PLAYER *adv){
@@ -92,13 +88,29 @@ void clean_game(PLAYER *curr, PLAYER *adv){
 	exit(EXIT_SUCCESS);
 }
 
+void input_players(PLAYER **p1, PLAYER **p2, int dim, int n_ships, int *game_shapes, MODE mode){
+	char name[NAME_LEN];
+
+	printf("Player 1: type your name >> ");
+	fgets(name, NAME_LEN, stdin);
+	//s_len = strlen(name) - 1;
+	//name[s_len] = '\0'; 
+	printf("%s: place your ships!\n", name);
+	*p1 = create_player(name, dim, n_ships, game_shapes, mode);
+	printf("Player 2: type your name >> ");
+	fgets(name, NAME_LEN, stdin);
+	//s_len = strlen(name) - 1;
+	//name[s_len] = '\0';
+	printf("%s: place your ships!\n", name);
+	*p2 = create_player(name, dim, n_ships, game_shapes, mode);
+}
+
 int main(){
 	int dim;	// map dimension (dim * dim)
 	int n_ships; // number of ships to be placed 	
 	int mode;	// 0 -> RANDOM / 1 -> MANUAL
 	//size_t s_len;
-	char name[NAME_LEN];
-	
+	PLAYER *p1, *p2;
 	srand ( time(NULL) );	// seed the random number generator 
 
 start_game:
@@ -106,37 +118,36 @@ start_game:
 	scanf("%d",&mode);
 
 	if(mode==0){ // RANDOM
-		printf("random\n");
+		dim = rand() % (MAX_DIM - MIN_DIM + 1) + MIN_DIM;
+		printf("Map dimension: %d x %d\n",dim,dim);double free c 
+		n_ships = (dim*dim) / (BMAP_SIZE*BMAP_SIZE);
+		int *game_shapes = (int*)malloc(sizeof(int)*n_ships);
+		for(int i=0; i<n_ships; i++){
+			game_shapes[i] = rand() % NSHAPES;
+		}
+		getchar();
+		input_players(&p1, &p2, dim, n_ships, game_shapes, RANDOM);
+		free(game_shapes);
+
 	}
 	else if(mode==1){ // MANUAL
 		printf("Enter the map dimension >> ");
 		scanf("%d",&dim);
 		getchar();
 		n_ships = (dim*dim) / (BMAP_SIZE*BMAP_SIZE);
-		int game_shapes[n_ships];
+		int *game_shapes = (int*)malloc(sizeof(int)*n_ships);
 		for(int i=0; i<n_ships; i++){
-			game_shapes[i] = random_bitmap();
+			game_shapes[i] = rand() % NSHAPES;
 		}
-
-		printf("Player 1: type your name >> ");
-		fgets(name, NAME_LEN, stdin);
-		//s_len = strlen(name) - 1;
-		//name[s_len] = '\0'; 
-		printf("%s: place your ships!\n", name);
-		PLAYER *p1 = create_player(name, dim, n_ships, game_shapes, MANUAL);
-		printf("Player 2: type your name >> ");
-		fgets(name, NAME_LEN, stdin);
-		//s_len = strlen(name) - 1;
-		//name[s_len] = '\0';
-		printf("%s: place your ships!\n", name);
-		PLAYER *p2 = create_player(name, dim, n_ships, game_shapes, MANUAL);
-		
-		play(p1, p2);
+		input_players(&p1, &p2, dim, n_ships, game_shapes, MANUAL);
+		free(game_shapes);
 	}
 	else{ // INVALID
 		printf("Invalid option. Try again.\n");
 		goto start_game;
 	}
+
+	play(p1, p2);
 
 	return 0;
 

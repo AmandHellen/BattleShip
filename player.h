@@ -29,6 +29,8 @@ void draw_field(char *, int);
 
 MAP *fill_map(MAP *, int, int *, MODE);
 
+MAP *fill_rand_map(MAP *, int, int *, MODE);
+
 bool place_ship(char *, MAP *, char *, int, int, int);
 
 void print_dashboard(PLAYER *);
@@ -36,6 +38,8 @@ void print_dashboard(PLAYER *);
 void free_player(PLAYER *);
 
 void player_error(char *);
+
+void gen_rand_moves(int *, int);
 
 //-----------------------------------------------------
 
