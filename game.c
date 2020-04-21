@@ -74,7 +74,7 @@ input_attack:
 		
 	}
 
-	exit_game(curr_player, other_player);
+	exit_game(p1, p2);
 }
 
 void exit_game(PLAYER *curr, PLAYER *adv){
@@ -86,12 +86,6 @@ void clean_game(PLAYER *curr, PLAYER *adv){
 	free_player(curr);
 	free_player(adv);
 	exit(EXIT_SUCCESS);
-}
-
-void gen_shapes(int n_ships, int *game_shapes){
-	for(int i=0; i<n_ships; i++){
-		game_shapes[i] = rand() % NSHAPES;
-	}
 }
 
 void input_players(PLAYER **p1, PLAYER **p2, int dim, int n_ships, int *game_shapes, MODE mode){
@@ -125,11 +119,15 @@ start_game:
 
 	if(mode==0){ // RANDOM
 		dim = rand() % (MAX_DIM - MIN_DIM + 1) + MIN_DIM;
-		printf("Map dimension: %d x %d\n",dim,dim);
+		printf("Map dimension: %d x %d\n",dim,dim);double free c 
 		n_ships = (dim*dim) / (BMAP_SIZE*BMAP_SIZE);
-		int game_shapes[n_ships];
-		gen_shapes(n_ships, game_shapes);
-
+		int *game_shapes = (int*)malloc(sizeof(int)*n_ships);
+		for(int i=0; i<n_ships; i++){
+			game_shapes[i] = rand() % NSHAPES;
+		}
+		getchar();
+		input_players(&p1, &p2, dim, n_ships, game_shapes, RANDOM);
+		free(game_shapes);
 
 	}
 	else if(mode==1){ // MANUAL
@@ -137,17 +135,19 @@ start_game:
 		scanf("%d",&dim);
 		getchar();
 		n_ships = (dim*dim) / (BMAP_SIZE*BMAP_SIZE);
-		int game_shapes[n_ships];
-		gen_shapes(n_ships, game_shapes);
-
+		int *game_shapes = (int*)malloc(sizeof(int)*n_ships);
+		for(int i=0; i<n_ships; i++){
+			game_shapes[i] = rand() % NSHAPES;
+		}
 		input_players(&p1, &p2, dim, n_ships, game_shapes, MANUAL);
-		
-		play(p1, p2);
+		free(game_shapes);
 	}
 	else{ // INVALID
 		printf("Invalid option. Try again.\n");
 		goto start_game;
 	}
+
+	play(p1, p2);
 
 	return 0;
 

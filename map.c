@@ -50,12 +50,11 @@ void print_map(MAP* m){
 
 // Destroy the structure
 void free_map(MAP *m){
-	SHIP *s;
+	int dim = m -> dim;
     if(m != NULL){
-    	for(int i = 0; i < m->dim*m->dim; i++){
-    		s = m -> matrix[i].ship;
-    		if(s != NULL)
-    			free(s);
+    	for(int i = 0; i < dim * dim; i++){
+            if(m -> matrix[i].ship != NULL)
+                free_ship(m -> matrix[i].ship);
     	}
         free(m -> matrix);
         free(m);
