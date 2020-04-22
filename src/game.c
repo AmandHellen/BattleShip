@@ -107,7 +107,6 @@ int main(){
 	int dim;	// map dimension (dim * dim)
 	int n_ships; // number of ships to be placed 	
 	int mode;	// 0 -> RANDOM / 1 -> MANUAL
-	//size_t s_len;
 	PLAYER *p1, *p2;
 	srand ( time(NULL) );	// seed the random number generator 
 

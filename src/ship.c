@@ -2,7 +2,9 @@
 
 SHAPE shapes[NSHAPES] = {{"..X....X....X....X....X..\0"},
                          {".......X....X....X.......\0"},
-                         {"............X............\0"}};
+                         {"............X............\0"},
+                         {"XXXXX..X....X....X....X..\0"},
+                         {"...X....X..XXX..X....X...\0"}};
 
 // returns a new instance of SHIP or NULL
 SHIP *create_ship(char *bitmap){
@@ -10,7 +12,6 @@ SHIP *create_ship(char *bitmap){
     if (s == NULL){ship_error("No memory");}
     s -> size = calculate_size(bitmap);
     s -> hits = 0;
-    s -> sunk = false;
     return s;
 }
 
