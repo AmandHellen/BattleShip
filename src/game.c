@@ -59,7 +59,7 @@ void play(PLAYER *p1, PLAYER *p2){
 input_attack: 
 		print_dashboard(curr_player);
 		print_map(other_player->map);
-		printf("\nNow playing: %s", curr_player->name);
+		printf("\nNow playing: %s\n", curr_player->name);
 		c = input_coord();
 		int attack_result = attack(c, curr_player, other_player); 
 		if( attack_result == 1){
@@ -78,7 +78,7 @@ input_attack:
 }
 
 void exit_game(PLAYER *curr, PLAYER *adv){
-	printf("Congratulations, %s! You win!!!\n", curr->name);
+	printf("Congratulations, %s! You win!\n", curr->name);
 	clean_game(curr, adv);
 }
 
@@ -93,14 +93,12 @@ void input_players(PLAYER **p1, PLAYER **p2, int dim, int n_ships, int *game_sha
 
 	printf("Player 1: type your name >> ");
 	fgets(name, NAME_LEN, stdin);
-	//s_len = strlen(name) - 1;
-	//name[s_len] = '\0'; 
+	name[strcspn(name ,"\n")] = 0;
 	printf("%s: place your ships!\n", name);
 	*p1 = create_player(name, dim, n_ships, game_shapes, mode);
 	printf("Player 2: type your name >> ");
 	fgets(name, NAME_LEN, stdin);
-	//s_len = strlen(name) - 1;
-	//name[s_len] = '\0';
+	name[strcspn(name ,"\n")] = 0;
 	printf("%s: place your ships!\n", name);
 	*p2 = create_player(name, dim, n_ships, game_shapes, mode);
 }
@@ -109,7 +107,6 @@ int main(){
 	int dim;	// map dimension (dim * dim)
 	int n_ships; // number of ships to be placed 	
 	int mode;	// 0 -> RANDOM / 1 -> MANUAL
-	//size_t s_len;
 	PLAYER *p1, *p2;
 	srand ( time(NULL) );	// seed the random number generator 
 
@@ -119,7 +116,7 @@ start_game:
 
 	if(mode==0){ // RANDOM
 		dim = rand() % (MAX_DIM - MIN_DIM + 1) + MIN_DIM;
-		printf("Map dimension: %d x %d\n",dim,dim);double free c 
+		printf("Map dimension: %d x %d\n",dim,dim);
 		n_ships = (dim*dim) / (BMAP_SIZE*BMAP_SIZE);
 		int *game_shapes = (int*)malloc(sizeof(int)*n_ships);
 		for(int i=0; i<n_ships; i++){
@@ -131,8 +128,13 @@ start_game:
 
 	}
 	else if(mode==1){ // MANUAL
-		printf("Enter the map dimension >> ");
+manual_mode:
+		printf("Enter the map dimension (10-40) >> ");
 		scanf("%d",&dim);
+		if(dim < MIN_DIM || dim > MAX_DIM) {
+			printf("Invalid map dimension! Input a number between 10 and 40.\n");
+			goto manual_mode;
+		}
 		getchar();
 		n_ships = (dim*dim) / (BMAP_SIZE*BMAP_SIZE);
 		int *game_shapes = (int*)malloc(sizeof(int)*n_ships);

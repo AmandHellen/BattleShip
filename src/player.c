@@ -57,13 +57,10 @@ void draw_ship(char *curr_bmap, MAP *map, char *map_repr, int old_x, int old_y, 
         for (int j = 0; j < BMAP_SIZE; j++){
             if (curr_bmap[rotate_point(i, j, curr_rot)] != '.'){
                 map_repr[(curr_y + i)*dim + (curr_x + j)] = 'X';
-               // printf("PRIMEIRO IF: DIM*DIM: %d | POS: %d\n",dim*dim, (curr_y + i)*dim + (curr_x + j));
-               // printf("ANTES DO SEGUNDO IF: DIM*DIM: %d | POS: %d\n", dim*dim, (old_y + i)*dim + (old_x + j));
                 if(map->matrix[(old_y + i)*dim + (old_x + j)].state == FILLED)
-                    map_repr[(old_y + i)*dim + (old_x + j)] = 'O';
-                //printf("SEGUNDO IF: DIM*DIM: %d | POS: %d\n", dim*dim, (old_y + i)*dim + (old_x + j));
-                }
-        }        
+                    map_repr[(old_y + i)*dim + (old_x + j)] = 'O';    
+            }
+        }       
 }
 
 void draw_field(char *map_repr, int dim){
@@ -81,13 +78,6 @@ void draw_field(char *map_repr, int dim){
         }
 }
 
-void gen_rand_moves(int *random_moves, int dim){
-    for(int i=0; i<dim; i++){
-        random_moves[i] = rand() % 100;
-       // printf("%c\n",random_moves[i]);
-    }
-}
-
 /*
 keep generating ships (or asking for them) and placing them on the 2D matrix
 return a new instance of MAP with that matrix
@@ -102,15 +92,6 @@ MAP *fill_map(MAP *map, int n_ships, int *game_shapes, MODE mode){
     int curr_x = dim / 2;
     int curr_y = 0;
 
-    
-/*
-    if(mode == RANDOM){
-        int n_rand_moves = rand() % dim;
-        char random_moves[dim];
-        printf("linha 99\n");
-        gen_rand_moves(random_moves, n_rand_moves);
-    }
-*/
     int shape_ind = 0;
     char *curr_bmap = shapes[game_shapes[shape_ind]].bitmap;
 
@@ -132,26 +113,10 @@ MAP *fill_map(MAP *map, int n_ships, int *game_shapes, MODE mode){
 
     while (shape_ind < n_ships) // Main Loop
     {
-  /*      if (mode == RANDOM){
-            if (move_ind == n_rand_moves){
-                key_press = 32;
-                move_ind = 0;
-                n_rand_moves = rand() % dim;
-                printf("linha 129\n");
-                gen_rand_moves(random_moves, n_rand_moves);
-                printf("linha 131\n");
-            }
-            else{
-                key_press = random_moves[move_ind];
-                //printf("%c\n",key_press);
-                move_ind++;
-            }
-        }
-        else */if (mode == MANUAL){
-            draw_field(map_repr, dim);
-            scanf("%c", &key_press);
-            getchar();      // clear input buffer 
-        }
+        
+        draw_field(map_repr, dim);
+        scanf("%c", &key_press);
+        getchar();      // clear input buffer 
 
         switch(tolower(key_press)){
             case 'w':
@@ -198,8 +163,6 @@ MAP *fill_map(MAP *map, int n_ships, int *game_shapes, MODE mode){
 }
 
 MAP *fill_rand_map(MAP *map, int n_ships, int *game_shapes, MODE mode){
-    // Game Logic
-
     int dim = map -> dim;
     char key_press;
     int old_x, old_y;
@@ -207,20 +170,10 @@ MAP *fill_rand_map(MAP *map, int n_ships, int *game_shapes, MODE mode){
     int curr_x = dim / 2;
     int curr_y = 0;
 
-    
-    
-    //int n_rand_moves = rand() % dim;
-   // int random_moves[dim];
-   // gen_rand_moves(&random_moves, n_rand_moves);
-   /* for(int i=0; i<dim; i++)
-        random_moves[i] = rand() % 100;
-       // printf("%c\n",random_moves[i]);*/
     int n_rand_moves = rand() % dim*dim;
     int *random_moves = (int*)malloc(sizeof(int)*n_rand_moves);
     for(int i=0; i<n_rand_moves; i++) 
         random_moves[i] = rand() % 100;
-    //int random_moves[6] = {34,10,58,90,3,17};
-
 
     int shape_ind = 0;
     char *curr_bmap = shapes[game_shapes[shape_ind]].bitmap;
@@ -243,32 +196,26 @@ MAP *fill_rand_map(MAP *map, int n_ships, int *game_shapes, MODE mode){
 
     while (shape_ind < n_ships) // Main Loop
     {
-      //  int random_moves[6] = {34,10,58,90,3,17};
         if (move_ind == n_rand_moves){
             key_press = 32;
             move_ind = 0;
             n_rand_moves = rand() % dim*dim;
+
             if(n_rand_moves == 0) n_rand_moves++;
+
             if(shape_ind + 1 < n_ships){
                 random_moves = (int*)realloc(random_moves, sizeof(int)*n_rand_moves);
-             
-
-                if (random_moves == NULL) printf("asdasdasd\n");
-             
-
                 for(int i=0; i<n_rand_moves; i++)
                     random_moves[i] = rand() % 100;
             }
         }
         else{
-            printf("%d - %d", move_ind, n_rand_moves);
             int aux = random_moves[move_ind];
             if (aux >= 0 && aux < 20) key_press = 'w';
             else if (aux >= 20 && aux < 40) key_press = 'a';
             else if (aux >= 40 && aux < 60) key_press = 'd';
             else if (aux >= 60 && aux < 80) key_press = 's';
             else key_press = 'r';
-            printf("%c\n",key_press);
             move_ind++;
         }
 
@@ -293,7 +240,6 @@ MAP *fill_rand_map(MAP *map, int n_ships, int *game_shapes, MODE mode){
                     continue;
                 }                
                 shape_ind++;
-                printf("SHAPE_IND: %d\nGAME_SHAPES_IND:%d\n", shape_ind, game_shapes[shape_ind]);
                 curr_bmap = shapes[game_shapes[shape_ind]].bitmap;
                 curr_rot = 0;
                 curr_x = dim / 2;
@@ -313,7 +259,7 @@ MAP *fill_rand_map(MAP *map, int n_ships, int *game_shapes, MODE mode){
     return map;
 }
 
-// checks the matrix for collisions and place the ship if there's none (POR ACABAR)
+// checks the matrix for collisions and place the ship if there's none
 bool place_ship(char *shape, MAP *map, char *map_repr, int curr_x, int curr_y, int curr_rot){
     int dim = map -> dim;
     SHIP *s = create_ship(shape);
