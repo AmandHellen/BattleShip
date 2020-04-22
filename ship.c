@@ -1,12 +1,10 @@
 #include "ship.h"
 
-SHAPE shapes[NSHAPES] = {//{"XXXXX..X....X....X....X..\0"},
-                         {"..X....X....X....X....X..\0"},
-                        // {"..X....X....XXX..X....X..\0"},
+SHAPE shapes[NSHAPES] = {{"..X....X....X....X....X..\0"},
                          {".......X....X....X.......\0"},
                          {"............X............\0"}};
 
-// returns a new instance of SHIP or NULL if the coordinates are illegal (diagonal)
+// returns a new instance of SHIP or NULL
 SHIP *create_ship(char *bitmap){
     SHIP *s = (SHIP *)malloc(sizeof(SHIP));
     if (s == NULL){ship_error("No memory");}
