@@ -3,10 +3,11 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include "ship.h"
 #include "types.h"
 
-#define MIN_DIM 10 
+#define MIN_DIM 10
 #define MAX_DIM 40
 
 typedef struct tile{
@@ -15,7 +16,7 @@ typedef struct tile{
 }TILE;
 
 typedef struct map{
-    TILE *matrix; 
+    TILE *matrix;
     int dim;
 }MAP;
 
@@ -23,6 +24,18 @@ typedef struct map{
 MAP *create_map(int);
 
 void print_map(MAP*);
+
+bool valid_position(char *, int, int, int, int, int, char *, MAP *);
+
+int rotate_point(int, int, int);
+
+void draw_ship(char *, MAP *, char *, int, int, int, int, int);
+
+void draw_field(char *, int);
+
+MAP *fill_map(MAP *, int, int *, MODE);
+
+bool place_ship(char *, MAP *, char *, int, int, int);
 
 void free_map(MAP *);
 
