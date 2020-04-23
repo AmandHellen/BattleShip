@@ -6,12 +6,7 @@ PLAYER *create_player(char *name, int dim, int n_ships, int *game_shapes, MODE m
     if(p == NULL){player_error("Failed to allocate memory for PLAYER");}
     memcpy(p -> name,   name, NAME_LEN);
     MAP *empty_map = create_map(dim);
-    if (mode == RANDOM){
-        p -> map = fill_rand_map(empty_map, n_ships, game_shapes, mode);
-    }
-    else{
-        p -> map = fill_map(empty_map, n_ships, game_shapes, mode);
-    }
+    p -> map = fill_map(empty_map, n_ships, game_shapes, mode);
     p -> n_ships = n_ships;
     return p;
 }
@@ -90,6 +85,18 @@ MAP *fill_map(MAP *map, int n_ships, int *game_shapes, MODE mode){
     int curr_rot = 0; // angle of the current rotation (0 -> 0 | 1 -> 90 | 2 -> 180 | 3 -> 270)
     int curr_x = dim / 2; // current x-axis coordinate of the ship
     int curr_y = 0; // current y-axis coordinate of the ship
+    int n_rand_moves; // number of random moves to execute
+    int *random_moves = NULL;
+
+    if (mode == RANDOM){ // populate random_moves with integers from 0 to dim*dim (each reprenting a move key)
+        n_rand_moves = rand() % dim*dim;
+        random_moves = (int*)malloc(sizeof(int)*n_rand_moves);
+        if (random_moves == NULL)
+            player_error("Failed to allocate memory for RANDOM_MOVES");
+        for(int i=0; i<n_rand_moves; i++)
+            random_moves[i] = rand() % 100;
+    }
+
 
     int shape_ind = 0; // first shape
     char *curr_bmap = shapes[game_shapes[shape_ind]].bitmap; // the shape of the current ship to be placed
@@ -116,13 +123,39 @@ MAP *fill_map(MAP *map, int n_ships, int *game_shapes, MODE mode){
     int move_ind = 0;
 
     while (shape_ind < n_ships){
-        system("clear");
-        draw_field(map_repr, dim);
-        printf("Place your ships!\n");
-        printf("Press one of the following keys + [ENTER]:\n");
-        printf("w -> up | s -> down | a -> left | d -> right | r -> rotate\n\n>> ");
-        scanf("%c", &key_press);
-        getchar();      // clear input buffer
+        if (mode == MANUAL){
+            system("clear");
+            draw_field(map_repr, dim);
+            printf("Place your ships!\n");
+            printf("Press one of the following keys + [ENTER]:\n");
+            printf("w -> up | s -> down | a -> left | d -> right | r -> rotate\n\n>> ");
+            scanf("%c", &key_press);
+            getchar();      // clear input buffer
+        }
+        else if (mode == RANDOM){
+            if (move_ind == n_rand_moves){ // executed all moves. place the ship.
+                key_press = 32;
+                // value resets
+                move_ind = 0;
+                n_rand_moves = rand() % dim*dim;
+
+                if(n_rand_moves == 0) n_rand_moves++; // always move atleast one position
+                if(shape_ind + 1 < n_ships){ // reallocate memory for new moves (except on the last cycle)
+                    random_moves = (int*)realloc(random_moves, sizeof(int)*n_rand_moves);
+                    for(int i=0; i<n_rand_moves; i++)
+                        random_moves[i] = rand() % 100;
+                }
+            }
+            else{ // get the key represented by the number
+                int aux = random_moves[move_ind];
+                if (aux >= 0 && aux < 20) key_press = 'w';
+                else if (aux >= 20 && aux < 40) key_press = 'a';
+                else if (aux >= 40 && aux < 60) key_press = 'd';
+                else if (aux >= 60 && aux < 80) key_press = 's';
+                else key_press = 'r';
+                move_ind++;
+            }
+        }
 
         // update the new position according to the key pressed
         switch(tolower(key_press)){
@@ -143,8 +176,10 @@ MAP *fill_map(MAP *map, int n_ships, int *game_shapes, MODE mode){
                 break;
             case 32: // try to place the ship on this position
                 if(!place_ship(curr_bmap, map, map_repr, curr_x, curr_y, curr_rot)){
-                    printf("You can't place the ship here!\n");
-                    sleep(1);
+                        if (mode == MANUAL){
+                            printf("You can't place the ship here!\n");
+                            sleep(1);
+                        }
                     continue;
                 }
                 shape_ind++; // next ship
@@ -157,107 +192,10 @@ MAP *fill_map(MAP *map, int n_ships, int *game_shapes, MODE mode){
                 draw_ship(curr_bmap, map, map_repr, old_x, old_y, curr_x, curr_y, curr_rot);
                 continue;
             default:
-                printf("Invalid key!\n");
-                sleep(1);
-        }
-        fflush(stdin);
-        draw_ship(curr_bmap, map, map_repr, old_x, old_y, curr_x, curr_y, curr_rot);
-
-        old_x = curr_x;
-        old_y = curr_y;
-    }
-    free(map_repr);
-    return map;
-}
-
-MAP *fill_rand_map(MAP *map, int n_ships, int *game_shapes, MODE mode){
-    int dim = map -> dim;
-    char key_press;
-    int old_x, old_y;
-    int curr_rot = 0;
-    int curr_x = dim / 2;
-    int curr_y = 0;
-
-    int n_rand_moves = rand() % dim*dim;
-    int *random_moves = (int*)malloc(sizeof(int)*n_rand_moves);
-    if (random_moves == NULL)
-        player_error("Failed to allocate memory for RANDOM_MOVES");
-    for(int i=0; i<n_rand_moves; i++)
-        random_moves[i] = rand() % 100;
-
-    int shape_ind = 0;
-    char *curr_bmap = shapes[game_shapes[shape_ind]].bitmap;
-
-    char *map_repr = (char*)malloc(sizeof(char)*dim*dim+1);
-    if (map_repr == NULL)
-        player_error("Failed to allocate memory for MAP_REPR");
-    for (int i = 0; i < dim; i++){
-        for (int j = 0; j < dim; j++){
-            map_repr[i*dim + j] = '.';
-        }
-    }
-    map_repr[dim*dim] = '\0';
-
-    draw_ship(curr_bmap, map, map_repr, old_x, old_y, curr_x, curr_y, curr_rot);
-
-    old_x = curr_x;
-    old_y = curr_y;
-
-    int move_ind = 0;
-
-    while (shape_ind < n_ships) // Main Loop
-    {
-        if (move_ind == n_rand_moves){
-            key_press = 32;
-            move_ind = 0;
-            n_rand_moves = rand() % dim*dim;
-
-            if(n_rand_moves == 0) n_rand_moves++;
-
-            if(shape_ind + 1 < n_ships){
-                random_moves = (int*)realloc(random_moves, sizeof(int)*n_rand_moves);
-                for(int i=0; i<n_rand_moves; i++)
-                    random_moves[i] = rand() % 100;
-            }
-        }
-        else{
-            int aux = random_moves[move_ind];
-            if (aux >= 0 && aux < 20) key_press = 'w';
-            else if (aux >= 20 && aux < 40) key_press = 'a';
-            else if (aux >= 40 && aux < 60) key_press = 'd';
-            else if (aux >= 60 && aux < 80) key_press = 's';
-            else key_press = 'r';
-            move_ind++;
-        }
-
-        switch(tolower(key_press)){
-            case 'w':
-                curr_y -= (valid_position(curr_bmap, curr_rot, curr_x, curr_y, curr_x, curr_y - 1, map_repr, map)) ? 1 : 0;
-                break;
-            case 's':
-                curr_y += (valid_position(curr_bmap, curr_rot, curr_x, curr_y, curr_x, curr_y + 1, map_repr, map)) ? 1 : 0;
-                break;
-            case 'd':
-                curr_x += (valid_position(curr_bmap, curr_rot, curr_x, curr_y, curr_x + 1, curr_y, map_repr, map)) ? 1 : 0;
-                break;
-            case 'a':
-                curr_x -= (valid_position(curr_bmap, curr_rot, curr_x, curr_y, curr_x - 1, curr_y, map_repr, map)) ? 1 : 0;
-                break;
-            case 'r':
-                curr_rot += (valid_position(curr_bmap, curr_rot + 1, curr_x, curr_y, curr_x, curr_y, map_repr, map)) ? 1 : 0;
-                break;
-            case 32:
-                if(!place_ship(curr_bmap, map, map_repr, curr_x, curr_y, curr_rot)){
-                    continue;
+                if (mode == MANUAL){
+                    printf("Invalid key!\n");
+                    sleep(1);
                 }
-                shape_ind++;
-                curr_bmap = shapes[game_shapes[shape_ind]].bitmap;
-                curr_rot = 0;
-                curr_x = dim / 2;
-                curr_y = 0;
-                fflush(stdin);
-                draw_ship(curr_bmap, map, map_repr, old_x, old_y, curr_x, curr_y, curr_rot);
-                continue;
         }
         fflush(stdin);
         draw_ship(curr_bmap, map, map_repr, old_x, old_y, curr_x, curr_y, curr_rot);
@@ -266,7 +204,7 @@ MAP *fill_rand_map(MAP *map, int n_ships, int *game_shapes, MODE mode){
         old_y = curr_y;
     }
     free(map_repr);
-    free(random_moves);
+    if (mode == RANDOM) free(random_moves);
     return map;
 }
 
