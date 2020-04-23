@@ -1,8 +1,8 @@
 # BattleShip
 
 ## Table of contents
-* [BUILD INSTRUCTIONS] (#build-instructions)
-* [HOW TO PLAY] (#how-to-play)
+* [Build instructions](#build-instructions)
+* [How to play](#how-to-play)
 
 ## Build instructions
 
