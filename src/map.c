@@ -3,7 +3,7 @@
 //returns a new instance of MAP
 MAP *create_map(int dim){
     MAP *m = (MAP*)malloc(sizeof(MAP));
-    if(m == NULL){map_error("No memory");}
+    if(m == NULL){map_error("Failed to allocate memory for a new MAP");}
     m -> dim = dim;
     TILE *matrix; // matrix to save the map state
     matrix = (TILE*)malloc(sizeof(TILE)*dim*dim); 
@@ -58,7 +58,7 @@ void free_map(MAP *m){
         free(m -> matrix);
         free(m);
     }else{
-        map_error("The map was badly generated.");
+        map_error("Cannot free MAP (NULL)");
     }
 }
 

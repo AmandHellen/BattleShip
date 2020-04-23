@@ -29,7 +29,7 @@ void free_ship(SHIP *s){
     if(s != NULL){
         free(s);
     }else{
-        ship_error("The ship was badly generated");
+        ship_error("Cannot free SHIP (NULL)");
     }
 }
 

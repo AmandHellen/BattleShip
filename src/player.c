@@ -309,7 +309,7 @@ void free_player(PLAYER *p){
         free(p);
     }
     else{
-        player_error("The player was badly generated");
+        player_error("Cannot free PLAYER (NULL)");
     }
 }
 
