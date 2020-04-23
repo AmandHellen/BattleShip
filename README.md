@@ -14,7 +14,7 @@ $ ./battleship
 ```
 
 ## How to play
-* Choose the map generation mode (RANDOM/MANUAL)
-* The RANDOM mode generates a map of random size (between 10*10 and 40*40) and places the ships in arbitrary positions
-* The MANUAL mode prompts the user for the map size and lets the user manually place the ships
-* The main game loop then follows, prompting each user at a time for the desired attack coordinates
+* Choose the map generation mode (RANDOM/MANUAL) (0/1 + ENTER)
+* The RANDOM mode generates a map of random size (between 10x10 and 40x40) and places the ships in arbitrary positions
+* The MANUAL mode prompts the user for the map size and lets the user manually place the ships (w/a/s/d/r + ENTER)
+* The main game loop then follows, prompting each user at a time for the desired attack coordinates (int + ENTER)
