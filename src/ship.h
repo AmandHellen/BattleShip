@@ -13,7 +13,8 @@ typedef struct shape{	// a struct containing a bitmap
 }SHAPE;
 
 typedef struct ship{
-    int size;
+	int shape; // index of SHAPE shapes[]
+    int size; // number of filled cells in the bitmap
     int hits;   // how many attacks suffered
 }SHIP;
 
@@ -22,7 +23,7 @@ extern SHAPE shapes[NSHAPES];
 
 //--------------------------------------------------------------
 
-SHIP *create_ship(char *);
+SHIP *create_ship(char *, int);
 
 int calculate_size(char *);
 

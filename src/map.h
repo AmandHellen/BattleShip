@@ -24,7 +24,7 @@ MAP *create_map(int);
 
 void print_strategy(MAP *);
 
-//void print_map(MAP*);
+void print_map(MAP*);
 
 bool valid_position(char *, int, int, int, int, int, char *, MAP *);
 
@@ -36,7 +36,9 @@ void draw_field(char *, int);
 
 MAP *fill_map(MAP *, int, int *, MODE);
 
-bool place_ship(char *, MAP *, char *, int, int, int);
+bool place_ship(int, char *, MAP *, char *, int, int, int);
+
+void remove_ship(MAP *, int, int, int);
 
 void free_map(MAP *);
 

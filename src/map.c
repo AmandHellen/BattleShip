@@ -49,7 +49,7 @@ void print_strategy(MAP *m){
 
 
 // FOR DEBUG ONLY
-/*
+
 void print_map(MAP* m){
     printf("  ");
     for (int i = 0; i < m -> dim; i++)
@@ -78,7 +78,6 @@ void print_map(MAP* m){
         printf("\n");
     }
 }
-*/
 
 // returns the index (unidimensional) when rotation r is applied to the point (i,j)
 int rotate_point(int i, int j, int r){
@@ -156,6 +155,7 @@ MAP *fill_map(MAP *map, int n_ships, int *game_shapes, MODE mode){
     int curr_y = 0; // current y-axis coordinate of the ship
     int n_rand_moves; // number of random moves to execute
     int *random_moves = NULL;
+    int shape;
 
     if (mode == RANDOM){ // populate random_moves with integers from 0 to dim*dim (each reprenting a move key)
         n_rand_moves = rand() % dim*dim;
@@ -244,7 +244,8 @@ MAP *fill_map(MAP *map, int n_ships, int *game_shapes, MODE mode){
                 curr_rot += (valid_position(curr_bmap, curr_rot + 1, curr_x, curr_y, curr_x, curr_y, map_repr, map)) ? 1 : 0;
                 break;
             case 32: // try to place the ship on this position
-                if(!place_ship(curr_bmap, map, map_repr, curr_x, curr_y, curr_rot)){
+                shape = game_shapes[shape_ind];
+                if(!place_ship(shape, curr_bmap, map, map_repr, curr_x, curr_y, curr_rot)){
                         if (mode == MANUAL){
                             printf("You can't place the ship here!\n");
                             delay(1);
@@ -281,9 +282,9 @@ MAP *fill_map(MAP *map, int n_ships, int *game_shapes, MODE mode){
 checks the matrix for collisions and place the ship if there's none
 Returns the result boolean result of said check
 */
-bool place_ship(char *shape, MAP *map, char *map_repr, int curr_x, int curr_y, int curr_rot){
+bool place_ship(int shape_ind, char *shape, MAP *map, char *map_repr, int curr_x, int curr_y, int curr_rot){
     int dim = map -> dim;
-    SHIP *s = create_ship(shape);
+    SHIP *s = create_ship(shape, shape_ind);
 
     for (int i = 0; i < BMAP_SIZE; i++){
         for (int j = 0; j < BMAP_SIZE; j++){
@@ -309,15 +310,51 @@ bool place_ship(char *shape, MAP *map, char *map_repr, int curr_x, int curr_y, i
     return true;
 }
 
+void remove_ship(MAP *m, int shape, int map_i, int map_j){
+    int dim = m -> dim;
+    for(int i = 0; i < BMAP_SIZE; i++){
+        for(int j = 0; j < BMAP_SIZE; j++){
+            if(shapes[shape].bitmap[i*BMAP_SIZE + j] == 'X')
+                m -> matrix[(map_i + i)*dim + (map_j + j)].state = EMPTY;
+
+
+                printf("%d\n", (map_i + i)*dim + (map_j + j));
+        }
+    }
+
+}
+
 // Destroy the structure
 void free_map(MAP *m){
 	int dim = m -> dim;
     if(m != NULL){
-    	for(int i = 0; i < dim * dim; i++){
-            if(m -> matrix[i].ship != NULL)
-                free_ship(m -> matrix[i].ship);
-                m -> matrix[i].ship = NULL;
-    	}
+        for(int i = 0; i < dim; i++){
+            for(int j = 0; j < dim; j++){
+                if (m -> matrix[i*dim + j].state == FILLED || m -> matrix[i*dim + j].state == HIT){
+                    int shape = m -> matrix[i*dim + j].ship -> shape; // shape index
+                    print_map(m);
+                    switch(shape){
+                        case 0:
+                            remove_ship(m, shape, i, j - 2);
+                            break;
+                        case 1:
+                            remove_ship(m, shape, i - 1, j - 2);
+                            break;
+                        case 2:
+                            remove_ship(m, shape, i - 2, j - 2);
+                            break;
+                        case 3:
+                            remove_ship(m, shape, i, j);
+                            break;
+                        case 4:
+                            remove_ship(m, shape, i, j - 3);
+                            break;
+                    }
+                    print_map(m);
+                    free_ship(m -> matrix[i*dim + j].ship);
+                }
+            }
+        }
         free(m -> matrix);
         free(m);
     }else{
