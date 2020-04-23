@@ -19,7 +19,7 @@ typedef struct player{
 //-----------------------------------------------------
 PLAYER *create_player(char *,int, int, int *, MODE);
 
-void print_dashboard(PLAYER *);
+void print_dashboard(PLAYER *, PLAYER*);
 
 void free_player(PLAYER *);
 

@@ -11,9 +11,11 @@ PLAYER *create_player(char *name, int dim, int n_ships, int *game_shapes, MODE m
     return p;
 }
 
-void print_dashboard(PLAYER *p){
-    print_map(p -> map);
-    printf("Remaining Ships: %d\n",p -> n_ships);
+void print_dashboard(PLAYER *curr, PLAYER *adv){
+    print_strategy(adv -> map);
+    printf("X -> HIT\nM -> MISS\n");
+    //print_map(p -> map);
+    printf("Remaining Ships: %d\n",curr -> n_ships);
 }
 
 // Destroys the structure

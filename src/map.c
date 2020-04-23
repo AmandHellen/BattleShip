@@ -18,6 +18,38 @@ MAP *create_map(int dim){
     return m;
 }
 
+void print_strategy(MAP *m){
+    printf("  ");
+    for (int i = 0; i < m -> dim; i++)
+        printf("%.2d ", i);
+    printf("\n");
+
+    for(int i=0; i< m -> dim; i++){
+        printf("%.2d", i);
+        for(int j=0; j< m -> dim; j++){
+            STATE pos = m -> matrix[i * m->dim + j].state;
+            switch(pos){
+                case EMPTY:
+                    printf(" . ");
+                    break;
+                case FILLED:
+                    printf(" . ");
+                    break;
+                case HIT:
+                    printf(" X ");
+                    break;
+                case MISS:
+                    printf(" M ");
+                    break;
+            }
+        }
+        printf("\n");
+    }
+}
+
+
+// FOR DEBUG ONLY
+/*
 void print_map(MAP* m){
     printf("  ");
     for (int i = 0; i < m -> dim; i++)
@@ -46,6 +78,7 @@ void print_map(MAP* m){
         printf("\n");
     }
 }
+*/
 
 // returns the index (unidimensional) when rotation r is applied to the point (i,j)
 int rotate_point(int i, int j, int r){

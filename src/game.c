@@ -70,7 +70,7 @@ void play(PLAYER *p1, PLAYER *p2){
 	while(!finished){
 input_attack:
 		system("clear");
-		print_dashboard(curr_player);
+		print_dashboard(curr_player, other_player);
 		//print_map(other_player->map);
 		printf("\nNow playing: %s\n", curr_player->name);
 		c = input_coord();
@@ -104,11 +104,15 @@ void input_players(PLAYER **p1, PLAYER **p2, int dim, int n_ships, int *game_sha
 	name[strcspn(name ,"\n")] = 0;
 	if (mode == RANDOM) printf("Randomly filling %s's map...\n", name);
 	*p1 = create_player(name, dim, n_ships, game_shapes, mode);
+	if (mode == RANDOM) printf("%s's map successfully generated.\n", name);
+
 	printf("Player 2: type your name >> ");
 	fgets(name, NAME_LEN, stdin);
 	name[strcspn(name ,"\n")] = 0;
 	if (mode == RANDOM) printf("Randomly filling %s's map...\n", name);
 	*p2 = create_player(name, dim, n_ships, game_shapes, mode);
+	if (mode == RANDOM) printf("%s's map successfully generated.\n", name);
+	delay(1);
 }
 
 // Call this in case of error
