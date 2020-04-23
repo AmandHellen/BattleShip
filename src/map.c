@@ -5,9 +5,8 @@ MAP *create_map(int dim){
     MAP *m = (MAP*)malloc(sizeof(MAP));
     if(m == NULL){map_error("No memory");}
     m -> dim = dim;
-    TILE *matrix;
-    //allocate memory for a 2D matrix
-    matrix = (TILE*)malloc(sizeof(TILE)*dim*dim);
+    TILE *matrix; // matrix to save the map state
+    matrix = (TILE*)malloc(sizeof(TILE)*dim*dim); 
     //initialize all the positions as EMPTY
     for(int i=0; i<dim; i++){
         for(int j=0; j<dim; j++){

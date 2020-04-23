@@ -10,12 +10,12 @@
 #define MAX_DIM 40
 
 typedef struct tile{
-    STATE state;
-    SHIP* ship;
+    STATE state; // 0 -> EMPTY / 1 -> FILLED / 2 -> HIT / 3 -> MISS
+    SHIP* ship;	// in case there's a ship in this tile
 }TILE;
 
 typedef struct map{
-    TILE *matrix; // 0 -> EMPTY / 1 -> FILLED / 2 -> ALREADY HIT
+    TILE *matrix; 
     int dim;
 }MAP;
 

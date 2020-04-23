@@ -1,5 +1,9 @@
 #include "game.h"
 
+/*
+prompts the user for the attack i and j coordinates 
+Returns a COORD with said i and j
+*/
 COORD input_coord(){
 	COORD c;
 	printf("Enter the attack coordinate:\n");
@@ -10,48 +14,58 @@ COORD input_coord(){
 	return c;
 }
 
+/*
+executes the attack by curr player on the adv player map and checks the game state
+Returns 0 for misses, 1 for hits and -1 in case the coordinate was previously tried 
+*/
 int attack(COORD c, PLAYER *curr, PLAYER *adv){
 	int dim = adv->map->dim;
-	int pos = c.i*dim + c.j;
+	int pos = c.i*dim + c.j; // bidimensional index to unidimensional conversion
 
-	if(pos < 0 || pos >= dim*dim ){
+	if(pos < 0 || pos >= dim*dim ){ // out of bounds 
 		printf("Invalid coordinate. Try again!\n");
 		return -1;
 	}
 	STATE state = adv->map->matrix[pos].state;
 	switch(state){
 		case EMPTY:
-			printf("You missed!\n");
+			printf("\nYou missed!\n");
+			sleep(1);
 			adv->map->matrix[pos].state = MISS;
 			return 0;
 		case FILLED:
-			printf("HIT!\n");
-			adv->map->matrix[pos].state = HIT;
-			adv->map->matrix[pos].ship->hits++;
+			printf("\nHIT!\n");
+			sleep(1);
+			adv->map->matrix[pos].state = HIT; // update the opponent's map state 
+			adv->map->matrix[pos].ship->hits++; // update the opponent's ship hit count
 			if(adv->map->matrix[pos].ship->size == adv->map->matrix[pos].ship->hits)
-				adv->n_ships--;
+				adv->n_ships--; // decrement the opponent's ship count when a ship is sunk
 			return 1;
 		case HIT:
-			printf("This position was previously attacked. Try again!\n");
+			printf("\nThis position was previously attacked. Try again!\n");
+			sleep(1);
 			return -1;
 		case MISS:
-			printf("This position was previously attacked. Try again!\n");
+			printf("\nThis position was previously attacked. Try again!\n");
+			sleep(1);
 			return -1;
 	}
 
 	return 0;
 }
 
+// checks if the current player wins (the opponent has no remaining ships)
 bool check_state(PLAYER *adv){
 	return adv->n_ships == 0;
 }
 
+// main game loop 
 void play(PLAYER *p1, PLAYER *p2){
 	bool finished = false;
 	COORD c;
 	PLAYER *curr_player = p1;
 	PLAYER *other_player = p2;
-	PLAYER *aux_player;
+	PLAYER *aux_player; // used for swapping
 
 	while(!finished){
 input_attack: 
@@ -61,31 +75,27 @@ input_attack:
 		printf("\nNow playing: %s\n", curr_player->name);
 		c = input_coord();
 		int attack_result = attack(c, curr_player, other_player); 
-		if( attack_result == 1){
+		if( attack_result == 1){ // HIT 
 			finished = check_state(other_player);
 			if(finished) continue;
-		}else if(attack_result == -1)
+		}else if(attack_result == -1) // retry attack
 			goto input_attack;
 
+		// swap the players 
 		aux_player = curr_player;
 		curr_player = other_player;
 		other_player = aux_player;		
 	}
-
-	exit_game(p1, p2);
-}
-
-void exit_game(PLAYER *curr, PLAYER *adv){
-	printf("Congratulations, %s! You win!\n", curr->name);
-	clean_game(curr, adv);
+	printf("Congratulations, %s! You win!\n", curr_player->name);
+	clean_game(p1, p2);
 }
 
 void clean_game(PLAYER *curr, PLAYER *adv){
 	free_player(curr);
 	free_player(adv);
-	exit(EXIT_SUCCESS);
 }
 
+// prompts the players for their names and fills their maps (RANDOM or MANUAL)
 void input_players(PLAYER **p1, PLAYER **p2, int dim, int n_ships, int *game_shapes, MODE mode){
 	char name[NAME_LEN];
 
@@ -101,12 +111,13 @@ void input_players(PLAYER **p1, PLAYER **p2, int dim, int n_ships, int *game_sha
 	*p2 = create_player(name, dim, n_ships, game_shapes, mode);
 }
 
+// main menu and game initializer 
 int main(){
 	int dim;	// map dimension (dim * dim)
 	int n_ships; // number of ships to be placed 	
 	int mode;	// 0 -> RANDOM / 1 -> MANUAL
 	PLAYER *p1, *p2;
-	srand ( time(NULL) );	// seed the random number generator 7
+	srand ( time(NULL) );	// seed the random number generator 
 	system("clear");
 	printf("===============================\n#####=====BATTLESHIP======#####\n===============================\n\n");
 
@@ -118,7 +129,7 @@ start_game:
 		dim = rand() % (MAX_DIM - MIN_DIM + 1) + MIN_DIM;
 		printf("Map dimension: %d x %d\n",dim,dim);
 		n_ships = (dim*dim) / (BMAP_SIZE*BMAP_SIZE);
-		int *game_shapes = (int*)malloc(sizeof(int)*n_ships);
+		int *game_shapes = (int*)malloc(sizeof(int)*n_ships); // random ships 
 		for(int i=0; i<n_ships; i++){
 			game_shapes[i] = rand() % NSHAPES;
 		}
@@ -137,7 +148,7 @@ manual_mode:
 		}
 		getchar();
 		n_ships = (dim*dim) / (BMAP_SIZE*BMAP_SIZE);
-		int *game_shapes = (int*)malloc(sizeof(int)*n_ships);
+		int *game_shapes = (int*)malloc(sizeof(int)*n_ships); // random ships
 		for(int i=0; i<n_ships; i++){
 			game_shapes[i] = rand() % NSHAPES;
 		}
@@ -151,6 +162,6 @@ manual_mode:
 
 	play(p1, p2);
 
-	return 0;
+	exit(EXIT_SUCCESS);
 
 }

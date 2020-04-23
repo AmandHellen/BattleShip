@@ -2,7 +2,6 @@
 
 // returns a new instance of PLAYER
 PLAYER *create_player(char *name, int dim, int n_ships, int *game_shapes, MODE mode){
-
     PLAYER *p = (PLAYER*)malloc(sizeof(PLAYER));
     if(p == NULL){player_error("No memory");}
     memcpy(p -> name,   name, NAME_LEN);
@@ -17,6 +16,7 @@ PLAYER *create_player(char *name, int dim, int n_ships, int *game_shapes, MODE m
     return p;
 }   
 
+// returns the index (unidimensional) when rotation r is applied to the point (i,j)
 int rotate_point(int i, int j, int r){
     switch(r % 4){
         case 0: return i * BMAP_SIZE + j;
@@ -27,6 +27,7 @@ int rotate_point(int i, int j, int r){
     return 0;
 }
 
+// checks if a move from (old_x, old_y) -> (new_x, new_y) is valid (between the boundaries) 
 bool valid_position(char *shape, int curr_rot, int old_x, int old_y, int new_x, int new_y, char *map_repr, MAP *map)
 {
     int dim = map -> dim;
@@ -36,33 +37,34 @@ bool valid_position(char *shape, int curr_rot, int old_x, int old_y, int new_x, 
         {
             old_pos = (old_y + i)*dim + (old_x + j);
             if((map->matrix[old_pos].state != FILLED) && old_pos >= 0 && old_pos < dim*dim){
-                map_repr[old_pos] = '.';
+                map_repr[old_pos] = '.'; // erase the 'X's on the the old ship position
             }
-                
-            // Get index into piece
-            int pi = rotate_point(i, j, curr_rot);
-
+            int pi = rotate_point(i, j, curr_rot); // get the unidimensional index of this point when curr_rot is applied
             if (shape[pi] != '.'){
                 if ((new_y +i < 0 || new_y + i >= dim) || (new_x + j < 0 || new_x + j >= dim)){
-                    return false;
+                    return false; // the new move make the piece go beyond the boundaries of the field. 
                 }
             }
         }
     return true;
 }
 
+
 void draw_ship(char *curr_bmap, MAP *map, char *map_repr, int old_x, int old_y, int curr_x, int curr_y, int curr_rot){
     int dim = map -> dim;
     for (int i = 0; i < BMAP_SIZE; i++)
         for (int j = 0; j < BMAP_SIZE; j++){
             if (curr_bmap[rotate_point(i, j, curr_rot)] != '.'){
+                // draw the ship on this position 
                 map_repr[(curr_y + i)*dim + (curr_x + j)] = 'X';
                 if(map->matrix[(old_y + i)*dim + (old_x + j)].state == FILLED)
+                    // if there was previously a ship on the old position, redraw it (erase the 'X')
                     map_repr[(old_y + i)*dim + (old_x + j)] = 'O';    
             }
         }       
 }
 
+//prints the map representation to the screen
 void draw_field(char *map_repr, int dim){
     printf("  ");
         for (int i = 0; i < dim; i++)
@@ -79,8 +81,8 @@ void draw_field(char *map_repr, int dim){
 }
 
 /*
-keep generating ships (or asking for them) and placing them on the 2D matrix
-return a new instance of MAP with that matrix
+keep asking for them and placing them on the 2D matrix
+Returns a new instance of MAP with that matrix
 */
 MAP *fill_map(MAP *map, int n_ships, int *game_shapes, MODE mode){
     // Game Logic
@@ -263,7 +265,10 @@ MAP *fill_rand_map(MAP *map, int n_ships, int *game_shapes, MODE mode){
     return map;
 }
 
-// checks the matrix for collisions and place the ship if there's none
+/*
+checks the matrix for collisions and place the ship if there's none
+Returns the result boolean result of said check
+*/
 bool place_ship(char *shape, MAP *map, char *map_repr, int curr_x, int curr_y, int curr_rot){
     int dim = map -> dim;
     SHIP *s = create_ship(shape);
@@ -271,12 +276,14 @@ bool place_ship(char *shape, MAP *map, char *map_repr, int curr_x, int curr_y, i
     for (int i = 0; i < BMAP_SIZE; i++){
         for (int j = 0; j < BMAP_SIZE; j++){
             if ((map->matrix[(curr_y + i)*dim + (curr_x + j)].state == FILLED) && (shape[rotate_point(i, j, curr_rot)] != '.')){
+                // collision! 
                 free_ship(s);
                 return false;
             }
         }
     }
 
+    //place the ship on the map's matrix and update map_repr 
     for (int i = 0; i < BMAP_SIZE; i++){
         for (int j = 0; j < BMAP_SIZE; j++){
             if (shape[rotate_point(i, j, curr_rot)] != '.'){

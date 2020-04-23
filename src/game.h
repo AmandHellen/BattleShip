@@ -18,8 +18,6 @@ bool check_state(PLAYER *);
 
 void play(PLAYER *, PLAYER *);
 
-void exit_game(PLAYER *, PLAYER *);
-
 void clean_game(PLAYER *, PLAYER *);
 
 void input_players(PLAYER **, PLAYER **, int, int, int *, MODE);
