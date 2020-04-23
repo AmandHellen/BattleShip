@@ -284,7 +284,7 @@ Returns the result boolean result of said check
 */
 bool place_ship(int shape_ind, char *shape, MAP *map, char *map_repr, int curr_x, int curr_y, int curr_rot){
     int dim = map -> dim;
-    SHIP *s = create_ship(shape, shape_ind);
+    SHIP *s = create_ship(shape, shape_ind, curr_rot);
 
     for (int i = 0; i < BMAP_SIZE; i++){
         for (int j = 0; j < BMAP_SIZE; j++){
@@ -316,9 +316,6 @@ void remove_ship(MAP *m, int shape, int map_i, int map_j){
         for(int j = 0; j < BMAP_SIZE; j++){
             if(shapes[shape].bitmap[i*BMAP_SIZE + j] == 'X')
                 m -> matrix[(map_i + i)*dim + (map_j + j)].state = EMPTY;
-
-
-                printf("%d\n", (map_i + i)*dim + (map_j + j));
         }
     }
 

@@ -5,11 +5,14 @@
 int main(){
 	int n_ships = 4;
 	int game_shapes[n_ships];
-		for(int i=0; i<n_ships; i++){
-			game_shapes[i] = rand() % NSHAPES;
-		}
+	for(int i=0; i<n_ships; i++){
+		game_shapes[i] = rand() % NSHAPES;
+	}
 	PLAYER *p1 = create_player("Amanda", 10, n_ships, game_shapes, MANUAL);
 	//PLAYER *p2 = create_player("Gui", 10, n_ships, game_shapes, MANUAL);
+	for(int i=0; i < 10*10; i++){
+		printf("%d: %d\n", i, p1 -> map -> matrix[i].ship -> rot);
+	}
 	//print_dashboard(p1);
 	//print_dashboard(p2);
 	free_player(p1);
