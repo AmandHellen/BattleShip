@@ -22,6 +22,8 @@ void clean_game(PLAYER *, PLAYER *);
 
 void input_players(PLAYER **, PLAYER **, int, int, int *, MODE);
 
+void game_error(char *);
+
 //-----------------------------------------------------------
 
 #endif 

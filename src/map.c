@@ -3,7 +3,7 @@
 //returns a new instance of MAP
 MAP *create_map(int dim){
     MAP *m = (MAP*)malloc(sizeof(MAP));
-    if(m == NULL){map_error("Failed to allocate memory for a new MAP");}
+    if(m == NULL){map_error("Failed to allocate memory for MAP");}
     m -> dim = dim;
     TILE *matrix; // matrix to save the map state
     matrix = (TILE*)malloc(sizeof(TILE)*dim*dim); 

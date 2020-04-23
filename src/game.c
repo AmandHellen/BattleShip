@@ -111,6 +111,12 @@ void input_players(PLAYER **p1, PLAYER **p2, int dim, int n_ships, int *game_sha
 	*p2 = create_player(name, dim, n_ships, game_shapes, mode);
 }
 
+// Call this in case of error
+void game_error(char *msg){
+	fprintf(stderr,"Error: %s.\n",msg);
+    exit(EXIT_FAILURE);
+}
+
 // main menu and game initializer 
 int main(){
 	int dim;	// map dimension (dim * dim)
@@ -130,6 +136,8 @@ start_game:
 		printf("Map dimension: %d x %d\n",dim,dim);
 		n_ships = (dim*dim) / (BMAP_SIZE*BMAP_SIZE);
 		int *game_shapes = (int*)malloc(sizeof(int)*n_ships); // random ships 
+		if (game_shapes == NULL)
+			game_error("Failed to allocate memory for GAME_SHAPES");
 		for(int i=0; i<n_ships; i++){
 			game_shapes[i] = rand() % NSHAPES;
 		}
@@ -149,6 +157,8 @@ manual_mode:
 		getchar();
 		n_ships = (dim*dim) / (BMAP_SIZE*BMAP_SIZE);
 		int *game_shapes = (int*)malloc(sizeof(int)*n_ships); // random ships
+		if (game_shapes == NULL)
+			game_error("Failed to allocate memory for GAME_SHAPES");
 		for(int i=0; i<n_ships; i++){
 			game_shapes[i] = rand() % NSHAPES;
 		}

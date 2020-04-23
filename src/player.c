@@ -3,7 +3,7 @@
 // returns a new instance of PLAYER
 PLAYER *create_player(char *name, int dim, int n_ships, int *game_shapes, MODE mode){
     PLAYER *p = (PLAYER*)malloc(sizeof(PLAYER));
-    if(p == NULL){player_error("No memory");}
+    if(p == NULL){player_error("Failed to allocate memory for PLAYER");}
     memcpy(p -> name,   name, NAME_LEN);
     MAP *empty_map = create_map(dim);
     if (mode == RANDOM){
@@ -98,6 +98,8 @@ MAP *fill_map(MAP *map, int n_ships, int *game_shapes, MODE mode){
     char *curr_bmap = shapes[game_shapes[shape_ind]].bitmap;
 
     char *map_repr = (char*)malloc(sizeof(char)*dim*dim+1);
+    if (map_repr == NULL)
+        player_error("Failed to allocate memory for MAP_REPR");
 
     for (int i = 0; i < dim; i++){
         for (int j = 0; j < dim; j++){
@@ -178,6 +180,8 @@ MAP *fill_rand_map(MAP *map, int n_ships, int *game_shapes, MODE mode){
 
     int n_rand_moves = rand() % dim*dim;
     int *random_moves = (int*)malloc(sizeof(int)*n_rand_moves);
+    if (random_moves == NULL)
+        player_error("Failed to allocate memory for RANDOM_MOVES");
     for(int i=0; i<n_rand_moves; i++) 
         random_moves[i] = rand() % 100;
 
