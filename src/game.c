@@ -1,7 +1,7 @@
 #include "game.h"
 
 /*
-prompts the user for the attack i and j coordinates 
+prompts the user for the attack i and j coordinates
 Returns a COORD with said i and j
 */
 COORD input_coord(){
@@ -16,13 +16,13 @@ COORD input_coord(){
 
 /*
 executes the attack by curr player on the adv player map and checks the game state
-Returns 0 for misses, 1 for hits and -1 in case the coordinate was previously tried 
+Returns 0 for misses, 1 for hits and -1 in case the coordinate was previously tried
 */
 int attack(COORD c, PLAYER *curr, PLAYER *adv){
 	int dim = adv->map->dim;
 	int pos = c.i*dim + c.j; // bidimensional index to unidimensional conversion
 
-	if(pos < 0 || pos >= dim*dim ){ // out of bounds 
+	if(pos < 0 || pos >= dim*dim ){ // out of bounds
 		printf("Invalid coordinate. Try again!\n");
 		return -1;
 	}
@@ -30,24 +30,24 @@ int attack(COORD c, PLAYER *curr, PLAYER *adv){
 	switch(state){
 		case EMPTY:
 			printf("\nYou missed!\n");
-			sleep(1);
+			delay(1);
 			adv->map->matrix[pos].state = MISS;
 			return 0;
 		case FILLED:
 			printf("\nHIT!\n");
-			sleep(1);
-			adv->map->matrix[pos].state = HIT; // update the opponent's map state 
+			delay(1);
+			adv->map->matrix[pos].state = HIT; // update the opponent's map state
 			adv->map->matrix[pos].ship->hits++; // update the opponent's ship hit count
 			if(adv->map->matrix[pos].ship->size == adv->map->matrix[pos].ship->hits)
 				adv->n_ships--; // decrement the opponent's ship count when a ship is sunk
 			return 1;
 		case HIT:
 			printf("\nThis position was previously attacked. Try again!\n");
-			sleep(1);
+			delay(1);
 			return -1;
 		case MISS:
 			printf("\nThis position was previously attacked. Try again!\n");
-			sleep(1);
+			delay(1);
 			return -1;
 	}
 
@@ -59,7 +59,7 @@ bool check_state(PLAYER *adv){
 	return adv->n_ships == 0;
 }
 
-// main game loop 
+// main game loop
 void play(PLAYER *p1, PLAYER *p2){
 	bool finished = false;
 	COORD c;
@@ -68,23 +68,23 @@ void play(PLAYER *p1, PLAYER *p2){
 	PLAYER *aux_player; // used for swapping
 
 	while(!finished){
-input_attack: 
+input_attack:
 		system("clear");
 		print_dashboard(curr_player);
 		//print_map(other_player->map);
 		printf("\nNow playing: %s\n", curr_player->name);
 		c = input_coord();
-		int attack_result = attack(c, curr_player, other_player); 
-		if( attack_result == 1){ // HIT 
+		int attack_result = attack(c, curr_player, other_player);
+		if( attack_result == 1){ // HIT
 			finished = check_state(other_player);
 			if(finished) continue;
 		}else if(attack_result == -1) // retry attack
 			goto input_attack;
 
-		// swap the players 
+		// swap the players
 		aux_player = curr_player;
 		curr_player = other_player;
-		other_player = aux_player;		
+		other_player = aux_player;
 	}
 	printf("Congratulations, %s! You win!\n", curr_player->name);
 	clean_game(p1, p2);
@@ -117,13 +117,13 @@ void game_error(char *msg){
     exit(EXIT_FAILURE);
 }
 
-// main menu and game initializer 
+// main menu and game initializer
 int main(){
 	int dim;	// map dimension (dim * dim)
-	int n_ships; // number of ships to be placed 	
+	int n_ships; // number of ships to be placed
 	int mode;	// 0 -> RANDOM / 1 -> MANUAL
 	PLAYER *p1, *p2;
-	srand ( time(NULL) );	// seed the random number generator 
+	srand ( time(NULL) );	// seed the random number generator
 	system("clear");
 	printf("===============================\n#####=====BATTLESHIP======#####\n===============================\n\n");
 
@@ -135,7 +135,7 @@ start_game:
 		dim = rand() % (MAX_DIM - MIN_DIM + 1) + MIN_DIM;
 		printf("Map dimension: %d x %d\n",dim,dim);
 		n_ships = (dim*dim) / (BMAP_SIZE*BMAP_SIZE);
-		int *game_shapes = (int*)malloc(sizeof(int)*n_ships); // random ships 
+		int *game_shapes = (int*)malloc(sizeof(int)*n_ships); // random ships
 		if (game_shapes == NULL)
 			game_error("Failed to allocate memory for GAME_SHAPES");
 		for(int i=0; i<n_ships; i++){

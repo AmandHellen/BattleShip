@@ -214,7 +214,7 @@ MAP *fill_map(MAP *map, int n_ships, int *game_shapes, MODE mode){
                 if(!place_ship(curr_bmap, map, map_repr, curr_x, curr_y, curr_rot)){
                         if (mode == MANUAL){
                             printf("You can't place the ship here!\n");
-                            sleep(1);
+                            delay(1);
                         }
                     continue;
                 }
@@ -230,7 +230,7 @@ MAP *fill_map(MAP *map, int n_ships, int *game_shapes, MODE mode){
             default:
                 if (mode == MANUAL){
                     printf("Invalid key!\n");
-                    sleep(1);
+                    delay(1);
                 }
         }
         fflush(stdin);
@@ -283,6 +283,7 @@ void free_map(MAP *m){
     	for(int i = 0; i < dim * dim; i++){
             if(m -> matrix[i].ship != NULL)
                 free_ship(m -> matrix[i].ship);
+                m -> matrix[i].ship = NULL;
     	}
         free(m -> matrix);
         free(m);

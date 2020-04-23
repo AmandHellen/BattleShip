@@ -9,7 +9,10 @@ int main(){
 			game_shapes[i] = rand() % NSHAPES;
 		}
 	PLAYER *p1 = create_player("Amanda", 10, n_ships, game_shapes, MANUAL);
+	//PLAYER *p2 = create_player("Gui", 10, n_ships, game_shapes, MANUAL);
 	print_dashboard(p1);
+	//print_dashboard(p2);
 	free_player(p1);
+	//free_player(p2);
 	return 0;
 }

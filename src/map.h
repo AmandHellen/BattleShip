@@ -3,9 +3,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include "ship.h"
-#include "types.h"
+#include "utils.h"
 
 #define MIN_DIM 10
 #define MAX_DIM 40
