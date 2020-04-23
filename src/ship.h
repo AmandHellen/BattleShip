@@ -3,12 +3,12 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "types.h"
+#include "utils.h"
 
 #define BMAP_SIZE 5 // a bitmap is always a 5x5 matrix
 #define NSHAPES 5	 // number of different ship shapes
 
-typedef struct shape{	// a struct containing a bitmap 
+typedef struct shape{	// a struct containing a bitmap
 	char bitmap[BMAP_SIZE*BMAP_SIZE+1];
 }SHAPE;
 
@@ -17,7 +17,7 @@ typedef struct ship{
     int hits;   // how many attacks suffered
 }SHIP;
 
-//	all possible shapes 
+//	all possible shapes
 extern SHAPE shapes[NSHAPES];
 
 //--------------------------------------------------------------
