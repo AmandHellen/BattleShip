@@ -111,10 +111,12 @@ MAP *fill_map(MAP *map, int n_ships, int *game_shapes, MODE mode){
 
     int move_ind = 0;
 
-    while (shape_ind < n_ships) // Main Loop
-    {
-        
+    while (shape_ind < n_ships){
+        system("clear");
         draw_field(map_repr, dim);
+        printf("Place your ships!\n");
+        printf("Press one of the following keys + [ENTER]:\n");
+        printf("w -> up | s -> down | a -> left | d -> right | r -> rotate\n\n>> ");
         scanf("%c", &key_press);
         getchar();      // clear input buffer 
 
@@ -137,7 +139,8 @@ MAP *fill_map(MAP *map, int n_ships, int *game_shapes, MODE mode){
             case 32:
                 if(!place_ship(curr_bmap, map, map_repr, curr_x, curr_y, curr_rot)){
                     if(mode == MANUAL)
-                        printf("You can't put the ship here!\n");
+                        printf("You can't place the ship here!\n");
+                        sleep(1);
                     continue;
                 }                
                 shape_ind++;
@@ -151,6 +154,7 @@ MAP *fill_map(MAP *map, int n_ships, int *game_shapes, MODE mode){
             default:
                 if(mode == MANUAL)
                     printf("Invalid key!\n");
+                    sleep(1);
         }
         fflush(stdin);
         draw_ship(curr_bmap, map, map_repr, old_x, old_y, curr_x, curr_y, curr_rot);

@@ -2,13 +2,11 @@
 
 COORD input_coord(){
 	COORD c;
-
 	printf("Enter the attack coordinate:\n");
 	printf("Line >> ");
 	scanf("%d", &c.i);
 	printf("Column >> ");
 	scanf("%d", &c.j);
-
 	return c;
 }
 
@@ -57,8 +55,9 @@ void play(PLAYER *p1, PLAYER *p2){
 
 	while(!finished){
 input_attack: 
+		system("clear");
 		print_dashboard(curr_player);
-		print_map(other_player->map);
+		//print_map(other_player->map);
 		printf("\nNow playing: %s\n", curr_player->name);
 		c = input_coord();
 		int attack_result = attack(c, curr_player, other_player); 
@@ -70,8 +69,7 @@ input_attack:
 
 		aux_player = curr_player;
 		curr_player = other_player;
-		other_player = aux_player;
-		
+		other_player = aux_player;		
 	}
 
 	exit_game(p1, p2);
@@ -94,12 +92,12 @@ void input_players(PLAYER **p1, PLAYER **p2, int dim, int n_ships, int *game_sha
 	printf("Player 1: type your name >> ");
 	fgets(name, NAME_LEN, stdin);
 	name[strcspn(name ,"\n")] = 0;
-	printf("%s: place your ships!\n", name);
+	if (mode == RANDOM) printf("Randomly filling %s's map...\n", name);
 	*p1 = create_player(name, dim, n_ships, game_shapes, mode);
 	printf("Player 2: type your name >> ");
 	fgets(name, NAME_LEN, stdin);
 	name[strcspn(name ,"\n")] = 0;
-	printf("%s: place your ships!\n", name);
+	if (mode == RANDOM) printf("Randomly filling %s's map...\n", name);
 	*p2 = create_player(name, dim, n_ships, game_shapes, mode);
 }
 
@@ -108,7 +106,9 @@ int main(){
 	int n_ships; // number of ships to be placed 	
 	int mode;	// 0 -> RANDOM / 1 -> MANUAL
 	PLAYER *p1, *p2;
-	srand ( time(NULL) );	// seed the random number generator 
+	srand ( time(NULL) );	// seed the random number generator 7
+	system("clear");
+	printf("===============================\n#####=====BATTLESHIP======#####\n===============================\n\n");
 
 start_game:
 	printf("Select the map generation mode:\n0 -> RANDOM\n1 -> MANUAL\n>> ");
