@@ -316,10 +316,12 @@ bool place_ship(int shape_ind, char *shape, MAP *map, char *map_repr, int curr_x
     return true;
 }
 
+// set all the map cells pointing to this ship as EMPTY
 void remove_ship(MAP *m, int shape, int rot, int map_i, int map_j){
     int dim = m -> dim;
     for(int i = 0; i < BMAP_SIZE; i++){
         for(int j = 0; j < BMAP_SIZE; j++){
+            // only set to EMPTY if this bitmap pos is an 'X' given the ship rotation
             if(shapes[shape].bitmap[rotate_point(i, j, rot, BMAP_SIZE)] == 'X')
                 m -> matrix[(map_i + i)*dim + (map_j + j)].state = EMPTY;
         }
@@ -334,7 +336,7 @@ void free_map(MAP *m){
         for(int i = 0; i < dim; i++){
             for(int j = 0; j < dim; j++){
                 if (m -> matrix[i*dim + j].state == FILLED || m -> matrix[i*dim + j].state == HIT){
-                    int shape = m -> matrix[i*dim + j].ship -> shape; // shape index
+                    int shape = m -> matrix[i*dim + j].ship -> shape;
                     int rot = m -> matrix[i*dim + j].ship -> rot;
                     COORD bmap_begin = m -> matrix[i*dim +j].ship -> bmap_begin;
                     remove_ship(m, shape, rot, bmap_begin.i, bmap_begin.j);
