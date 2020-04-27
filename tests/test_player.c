@@ -10,8 +10,12 @@ int main(){
 	}
 	PLAYER *p1 = create_player("Amanda", 10, n_ships, game_shapes, MANUAL);
 	//PLAYER *p2 = create_player("Gui", 10, n_ships, game_shapes, MANUAL);
+
+	print_map(p1 -> map);
+
 	for(int i=0; i < 10*10; i++){
-		printf("%d: %d\n", i, p1 -> map -> matrix[i].ship -> rot);
+		if(p1 -> map -> matrix[i].state == FILLED)
+			printf("%d: %d\n", i, p1 -> map -> matrix[i].ship -> rot);
 	}
 	//print_dashboard(p1);
 	//print_dashboard(p2);

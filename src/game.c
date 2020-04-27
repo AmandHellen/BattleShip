@@ -75,7 +75,7 @@ input_attack:
 		printf("\nNow playing: %s\n", curr_player->name);
 		c = input_coord();
 		int attack_result = attack(c, curr_player, other_player);
-		if( attack_result == 1){ // HIT
+		if(attack_result == 1){ // HIT
 			finished = check_state(other_player);
 			if(finished) continue;
 		}else if(attack_result == -1) // retry attack
