@@ -50,9 +50,8 @@ void print_strategy(MAP *m){
     }
 }
 
-
-// FOR DEBUG ONLY
-
+/*
+//FOR DEBUG ONLY
 void print_map(MAP* m){
     printf("  ");
     for (int i = 0; i < m -> dim; i++)
@@ -81,6 +80,7 @@ void print_map(MAP* m){
         printf("\n");
     }
 }
+*/
 
 // returns the index (unidimensional) when rotation r is applied to the point (i,j)
 int rotate_point(int i, int j, int r, int dim){

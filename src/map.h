@@ -24,7 +24,7 @@ MAP *create_map(int);
 
 void print_strategy(MAP *);
 
-void print_map(MAP*);
+//void print_map(MAP*);
 
 bool valid_position(char *, int, int, int, int, int, char *, MAP *);
 
