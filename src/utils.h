@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include <ctype.h>
+#include <time.h>
 
 typedef enum {RANDOM, MANUAL} MODE; // ship creation mode
 
@@ -11,5 +12,7 @@ typedef enum {EMPTY, FILLED, HIT, MISS} STATE; // status of each matrix cell
 typedef struct coord{
 	int i, j;
 }COORD;
+
+void delay(int);
 
 #endif

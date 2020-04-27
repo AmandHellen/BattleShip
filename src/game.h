@@ -1,15 +1,14 @@
 #ifndef GAME_H
-#define GAME_H 
+#define GAME_H
 
-#include <stdio.h> 
+#include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include "types.h"
+#include "utils.h"
 #include "player.h"
 #include "ship.h"
 
 //-----------------------------------------------------------
-int random_bitmap(void);
 
 COORD input_coord(void);
 
@@ -19,10 +18,12 @@ bool check_state(PLAYER *);
 
 void play(PLAYER *, PLAYER *);
 
-void exit_game(PLAYER *, PLAYER *);
-
 void clean_game(PLAYER *, PLAYER *);
+
+void input_players(PLAYER **, PLAYER **, int, int, int *, MODE);
+
+void game_error(char *);
 
 //-----------------------------------------------------------
 
-#endif 
+#endif
