@@ -34,12 +34,18 @@ int attack(COORD c, PLAYER *curr, PLAYER *adv){
 			adv->map->matrix[pos].state = MISS;
 			return 0;
 		case FILLED:
-			printf("\nHIT!\n");
-			delay(1);
 			adv->map->matrix[pos].state = HIT; // update the opponent's map state
 			adv->map->matrix[pos].ship->hits++; // update the opponent's ship hit count
-			if(adv->map->matrix[pos].ship->size == adv->map->matrix[pos].ship->hits)
-				adv->n_ships--; // decrement the opponent's ship count when a ship is sunk
+			if(adv->map->matrix[pos].ship->size == adv->map->matrix[pos].ship->hits){ // sunk
+				printf("\nSUNK!\n");
+				delay(1);
+				adv->n_ships--;
+				adv->map->matrix[pos].ship->sunk = true;
+			}
+			else{
+				printf("\nHIT!\n");
+				delay(1);
+			}
 			return 1;
 		case HIT:
 			printf("\nThis position was previously attacked. Try again!\n");
@@ -70,8 +76,8 @@ void play(PLAYER *p1, PLAYER *p2){
 	while(!finished){
 input_attack:
 		system("clear");
-		//print_dashboard(curr_player, other_player);
-		print_map(other_player->map);
+		print_dashboard(curr_player, other_player);
+		//print_map(other_player->map);
 		printf("\nNow playing: %s\n", curr_player->name);
 		c = input_coord();
 		int attack_result = attack(c, curr_player, other_player);

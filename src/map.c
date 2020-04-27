@@ -36,7 +36,10 @@ void print_strategy(MAP *m){
                     printf(" . ");
                     break;
                 case HIT:
-                    printf(" X ");
+                    if(m -> matrix[i * m->dim + j].ship->sunk)
+                        printf(" S ");
+                    else
+                        printf(" X ");
                     break;
                 case MISS:
                     printf(" M ");
@@ -328,7 +331,6 @@ void remove_ship(MAP *m, int shape, int rot, int map_i, int map_j){
 void free_map(MAP *m){
 	int dim = m -> dim;
     if(m != NULL){
-        print_map(m);
         for(int i = 0; i < dim; i++){
             for(int j = 0; j < dim; j++){
                 if (m -> matrix[i*dim + j].state == FILLED || m -> matrix[i*dim + j].state == HIT){
@@ -336,7 +338,6 @@ void free_map(MAP *m){
                     int rot = m -> matrix[i*dim + j].ship -> rot;
                     COORD bmap_begin = m -> matrix[i*dim +j].ship -> bmap_begin;
                     remove_ship(m, shape, rot, bmap_begin.i, bmap_begin.j);
-                    print_map(m);
                     free_ship(m -> matrix[i*dim + j].ship);
                 }
             }

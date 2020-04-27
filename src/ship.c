@@ -12,6 +12,7 @@ SHIP *create_ship(char *bitmap, int shape_ind, int rot, COORD c){
     if (s == NULL){ship_error("Failed to allocate memory for SHIP");}
     s -> size = calculate_size(bitmap);
     s -> hits = 0;
+    s -> sunk = false;
     s -> rot = rot % 4;
     s -> shape = shape_ind;
     s -> bmap_begin = c;
