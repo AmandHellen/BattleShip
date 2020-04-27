@@ -28,7 +28,7 @@ void print_map(MAP*);
 
 bool valid_position(char *, int, int, int, int, int, char *, MAP *);
 
-int rotate_point(int, int, int);
+int rotate_point(int, int, int, int);
 
 void draw_ship(char *, MAP *, char *, int, int, int, int, int);
 
@@ -38,7 +38,7 @@ MAP *fill_map(MAP *, int, int *, MODE);
 
 bool place_ship(int, char *, MAP *, char *, int, int, int);
 
-void remove_ship(MAP *, int, int, int);
+void remove_ship(MAP *, int, int, int, int);
 
 void free_map(MAP *);
 

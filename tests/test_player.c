@@ -13,10 +13,10 @@ int main(){
 
 	print_map(p1 -> map);
 
-	for(int i=0; i < 10*10; i++){
+	/*for(int i=0; i < 10*10; i++){
 		if(p1 -> map -> matrix[i].state == FILLED)
 			printf("%d: %d\n", i, p1 -> map -> matrix[i].ship -> rot);
-	}
+	}*/
 	//print_dashboard(p1);
 	//print_dashboard(p2);
 	free_player(p1);

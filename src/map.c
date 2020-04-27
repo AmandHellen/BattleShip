@@ -80,12 +80,12 @@ void print_map(MAP* m){
 }
 
 // returns the index (unidimensional) when rotation r is applied to the point (i,j)
-int rotate_point(int i, int j, int r){
+int rotate_point(int i, int j, int r, int dim){
     switch(r % 4){
-        case 0: return i * BMAP_SIZE + j;
-        case 1: return 20 + i - (j * BMAP_SIZE);
-        case 2: return 24 - (i * BMAP_SIZE) - j;
-        case 3: return 4 - i + (j * BMAP_SIZE);
+        case 0: return i * dim + j;
+        case 1: return (dim*dim - dim) + i - (j * dim);
+        case 2: return (dim*dim - 1) - (i * dim) - j;
+        case 3: return (dim - 1) - i + (j * dim);
     }
     return 0;
 }
@@ -101,7 +101,7 @@ bool valid_position(char *shape, int curr_rot, int old_x, int old_y, int new_x, 
             if((map->matrix[old_pos].state != FILLED) && old_pos >= 0 && old_pos < dim*dim){
                 map_repr[old_pos] = '.'; // erase the 'X's on the the old ship position
             }
-            int pi = rotate_point(i, j, curr_rot); // get the unidimensional index of this point when curr_rot is applied
+            int pi = rotate_point(i, j, curr_rot, BMAP_SIZE); // get the unidimensional index of this point when curr_rot is applied
             if (shape[pi] != '.'){
                 if ((new_y +i < 0 || new_y + i >= dim) || (new_x + j < 0 || new_x + j >= dim)){
                     return false; // the new move make the piece go beyond the boundaries of the field.
@@ -116,7 +116,7 @@ void draw_ship(char *curr_bmap, MAP *map, char *map_repr, int old_x, int old_y, 
     int dim = map -> dim;
     for (int i = 0; i < BMAP_SIZE; i++)
         for (int j = 0; j < BMAP_SIZE; j++){
-            if (curr_bmap[rotate_point(i, j, curr_rot)] != '.'){
+            if (curr_bmap[rotate_point(i, j, curr_rot, BMAP_SIZE)] != '.'){
                 // draw the ship on this position
                 map_repr[(curr_y + i)*dim + (curr_x + j)] = 'X';
                 if(map->matrix[(old_y + i)*dim + (old_x + j)].state == FILLED)
@@ -284,11 +284,14 @@ Returns the result boolean result of said check
 */
 bool place_ship(int shape_ind, char *shape, MAP *map, char *map_repr, int curr_x, int curr_y, int curr_rot){
     int dim = map -> dim;
-    SHIP *s = create_ship(shape, shape_ind, curr_rot);
+    COORD bmap_begin;
+    bmap_begin.i = curr_y;
+    bmap_begin.j = curr_x;
+    SHIP *s = create_ship(shape, shape_ind, curr_rot, bmap_begin);
 
     for (int i = 0; i < BMAP_SIZE; i++){
         for (int j = 0; j < BMAP_SIZE; j++){
-            if ((map->matrix[(curr_y + i)*dim + (curr_x + j)].state == FILLED) && (shape[rotate_point(i, j, curr_rot)] != '.')){
+            if ((map->matrix[(curr_y + i)*dim + (curr_x + j)].state == FILLED) && (shape[rotate_point(i, j, curr_rot, BMAP_SIZE)] != '.')){
                 // collision!
                 free_ship(s);
                 return false;
@@ -299,7 +302,7 @@ bool place_ship(int shape_ind, char *shape, MAP *map, char *map_repr, int curr_x
     //place the ship on the map's matrix and update map_repr
     for (int i = 0; i < BMAP_SIZE; i++){
         for (int j = 0; j < BMAP_SIZE; j++){
-            if (shape[rotate_point(i, j, curr_rot)] != '.'){
+            if (shape[rotate_point(i, j, curr_rot, BMAP_SIZE)] != '.'){
                 map->matrix[(curr_y + i)*dim + (curr_x + j)].state = FILLED;
                 map->matrix[(curr_y + i)*dim + (curr_x + j)].ship = s;
                 map_repr[(curr_y + i)*dim + (curr_x + j)] = 'O';
@@ -310,11 +313,11 @@ bool place_ship(int shape_ind, char *shape, MAP *map, char *map_repr, int curr_x
     return true;
 }
 
-void remove_ship(MAP *m, int shape, int map_i, int map_j){
+void remove_ship(MAP *m, int shape, int rot, int map_i, int map_j){
     int dim = m -> dim;
     for(int i = 0; i < BMAP_SIZE; i++){
         for(int j = 0; j < BMAP_SIZE; j++){
-            if(shapes[shape].bitmap[i*BMAP_SIZE + j] == 'X')
+            if(shapes[shape].bitmap[rotate_point(i, j, rot, BMAP_SIZE)] == 'X')
                 m -> matrix[(map_i + i)*dim + (map_j + j)].state = EMPTY;
         }
     }
@@ -325,28 +328,14 @@ void remove_ship(MAP *m, int shape, int map_i, int map_j){
 void free_map(MAP *m){
 	int dim = m -> dim;
     if(m != NULL){
+        print_map(m);
         for(int i = 0; i < dim; i++){
             for(int j = 0; j < dim; j++){
                 if (m -> matrix[i*dim + j].state == FILLED || m -> matrix[i*dim + j].state == HIT){
                     int shape = m -> matrix[i*dim + j].ship -> shape; // shape index
-                    print_map(m);
-                    switch(shape){
-                        case 0:
-                            remove_ship(m, shape, i, j - 2);
-                            break;
-                        case 1:
-                            remove_ship(m, shape, i - 1, j - 2);
-                            break;
-                        case 2:
-                            remove_ship(m, shape, i - 2, j - 2);
-                            break;
-                        case 3:
-                            remove_ship(m, shape, i, j);
-                            break;
-                        case 4:
-                            remove_ship(m, shape, i, j - 3);
-                            break;
-                    }
+                    int rot = m -> matrix[i*dim + j].ship -> rot;
+                    COORD bmap_begin = m -> matrix[i*dim +j].ship -> bmap_begin;
+                    remove_ship(m, shape, rot, bmap_begin.i, bmap_begin.j);
                     print_map(m);
                     free_ship(m -> matrix[i*dim + j].ship);
                 }

@@ -7,13 +7,14 @@ SHAPE shapes[NSHAPES] = {{"..X....X....X....X....X..\0"},
                          {"...X....X..XXX..X....X...\0"}};
 
 // returns a new instance of SHIP
-SHIP *create_ship(char *bitmap, int shape_ind, int rot){
+SHIP *create_ship(char *bitmap, int shape_ind, int rot, COORD c){
     SHIP *s = (SHIP *)malloc(sizeof(SHIP));
     if (s == NULL){ship_error("Failed to allocate memory for SHIP");}
     s -> size = calculate_size(bitmap);
     s -> hits = 0;
     s -> rot = rot % 4;
     s -> shape = shape_ind;
+    s -> bmap_begin = c;
     return s;
 }
 

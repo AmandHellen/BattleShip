@@ -17,6 +17,7 @@ typedef struct ship{
     int hits;   // how many attacks suffered
 	int shape; // index of SHAPE shapes[]
 	int rot; // shape rotation
+	COORD bmap_begin; // the map coordinates for the first bitmap cell
 }SHIP;
 
 //	all possible shapes
@@ -24,7 +25,7 @@ extern SHAPE shapes[NSHAPES];
 
 //--------------------------------------------------------------
 
-SHIP *create_ship(char *, int, int);
+SHIP *create_ship(char *, int, int, COORD);
 
 int calculate_size(char *);
 
