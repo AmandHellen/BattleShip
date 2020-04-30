@@ -199,8 +199,9 @@ MAP *fill_map(MAP *map, int n_ships, int *game_shapes, MODE mode){
             system("clear");
             draw_field(map_repr, dim);
             printf("Place your ships!\n");
-            printf("Press one of the following keys + [ENTER]:\n");
-            printf("w -> up | s -> down | a -> left | d -> right | r -> rotate\n\n>> ");
+            printf("To move the ship around press on the following keys + [ENTER]:\n");
+            printf("w -> up | s -> down | a -> left | d -> right | r -> rotate\n");
+            printf("To place the ship press [SPACE] + [ENTER]\n\n>> ");
             scanf("%c", &key_press);
             getchar();      // clear input buffer
         }
