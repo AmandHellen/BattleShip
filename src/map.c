@@ -152,10 +152,11 @@ Updates the map matrix and returns that map
 MAP *fill_map(MAP *map, int n_ships, int *game_shapes, MODE mode){
     int dim = map -> dim;
     char key_press;
-    int old_x, old_y;
     int curr_rot = 0; // angle of the current rotation (0 -> 0 | 1 -> 90 | 2 -> 180 | 3 -> 270)
     int curr_x = dim / 2; // current x-axis coordinate of the ship
     int curr_y = 0; // current y-axis coordinate of the ship
+    int old_x = curr_x;
+    int old_y = curr_y;
     int n_rand_moves; // number of random moves to execute
     int *random_moves = NULL;
     int shape;
@@ -188,9 +189,6 @@ MAP *fill_map(MAP *map, int n_ships, int *game_shapes, MODE mode){
 
     // the first ship starts here (before moving)
     draw_ship(curr_bmap, map, map_repr, old_x, old_y, curr_x, curr_y, curr_rot);
-
-    old_x = curr_x;
-    old_y = curr_y;
 
     int move_ind = 0;
 

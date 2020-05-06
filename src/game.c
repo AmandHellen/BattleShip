@@ -158,10 +158,10 @@ start_game:
 	}
 	else if(mode==1){ // MANUAL
 manual_mode:
-		printf("Enter the map dimension (10-40) >> ");
+		printf("Enter the map dimension (20-40) >> ");
 		scanf("%d",&dim);
 		if(dim < MIN_DIM || dim > MAX_DIM) {
-			printf("Invalid map dimension! Input a number between 10 and 40.\n");
+			printf("Invalid map dimension! Input a number between 20 and 40.\n");
 			goto manual_mode;
 		}
 		getchar();

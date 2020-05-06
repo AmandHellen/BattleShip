@@ -6,7 +6,7 @@
 #include "ship.h"
 #include "utils.h"
 
-#define MIN_DIM 10
+#define MIN_DIM 20
 #define MAX_DIM 40
 
 typedef struct tile{
