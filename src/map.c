@@ -50,7 +50,7 @@ void print_strategy(MAP *m){
     }
 }
 
-/*
+
 //FOR DEBUG ONLY
 void print_map(MAP* m){
     printf("  ");
@@ -80,7 +80,7 @@ void print_map(MAP* m){
         printf("\n");
     }
 }
-*/
+
 
 // returns the index (unidimensional) when rotation r is applied to the point (i,j)
 int rotate_point(int i, int j, int r, int dim){
@@ -145,35 +145,14 @@ void draw_field(char *map_repr, int dim){
         }
 }
 
-/*
-ship placement loop
-Updates the map matrix and returns that map
-*/
-MAP *fill_map(MAP *map, int n_ships, int *game_shapes, MODE mode){
-    int dim = map -> dim;
-    char key_press;
-    int curr_rot = 0; // angle of the current rotation (0 -> 0 | 1 -> 90 | 2 -> 180 | 3 -> 270)
-    int curr_x = dim / 2; // current x-axis coordinate of the ship
-    int curr_y = 0; // current y-axis coordinate of the ship
-    int old_x = curr_x;
-    int old_y = curr_y;
-    int n_rand_moves; // number of random moves to execute
-    int *random_moves = NULL;
-    int shape;
+void gen_rand_moves(int dim, int *random_moves, int n_rand_moves){
+    random_moves = (int*)realloc(random_moves, sizeof(int)*n_rand_moves);
+    for(int i=0; i<n_rand_moves; i++)
+        random_moves[i] = rand() % 100;
+    //return random_moves;
+}
 
-    if (mode == RANDOM){ // populate random_moves with integers from 0 to dim*dim (each reprenting a move key)
-        n_rand_moves = rand() % dim*dim;
-        random_moves = (int*)malloc(sizeof(int)*n_rand_moves);
-        if (random_moves == NULL)
-            map_error("Failed to allocate memory for RANDOM_MOVES");
-        for(int i=0; i<n_rand_moves; i++)
-            random_moves[i] = rand() % 100;
-    }
-
-
-    int shape_ind = 0; // first shape
-    char *curr_bmap = shapes[game_shapes[shape_ind]].bitmap; // the shape of the current ship to be placed
-
+char *gen_map_repr(int dim){
     // just a representation of the map for UI purposes
     char *map_repr = (char*)malloc(sizeof(char)*dim*dim+1);
     if (map_repr == NULL)
@@ -186,6 +165,62 @@ MAP *fill_map(MAP *map, int n_ships, int *game_shapes, MODE mode){
         }
     }
     map_repr[dim*dim] = '\0';
+    return map_repr;
+}
+
+char get_keypress(int dim, char* map_repr){
+    char key_press;
+    system("clear");
+    draw_field(map_repr, dim);
+    printf("Place your ships!\n");
+    printf("To move the ship around press on the following keys + [ENTER]:\n");
+    printf("w -> up | s -> down | a -> left | d -> right | r -> rotate\n");
+    printf("To place the ship press [SPACE] + [ENTER]\n\n>> ");
+    scanf("%c", &key_press);
+    getchar();      // clear input buffer
+    return key_press;
+}
+
+char get_rand_keypress(int rand_ind){
+    if (rand_ind >= 0 && rand_ind < 20) return 'w';
+    else if (rand_ind >= 20 && rand_ind < 40) return 'a';
+    else if (rand_ind >= 40 && rand_ind < 60) return 'd';
+    else if (rand_ind >= 60 && rand_ind < 80) return 's';
+    else return 'r';
+}
+
+/*
+ship placement loop
+Updates the map matrix and returns that map
+*/
+MAP *fill_map(MAP *map, int n_ships, int *game_shapes, MODE mode){
+    int dim = map -> dim;
+    char key_press;
+    int curr_rot = 0; // angle of the current rotation (0 -> 0 | 1 -> 90 | 2 -> 180 | 3 -> 270)
+    int curr_x = dim / 2; // current x-axis coordinate of the ship
+    int curr_y = 0; // current y-axis coordinate of the ship
+    int old_x = curr_x;
+    int old_y = curr_y;
+    int shape;
+    int n_rand_moves; // number of random moves to execute
+
+    int *random_moves = (int*)malloc(0);
+    if (random_moves == NULL)
+        map_error("Failed to allocate memory for RANDOM_MOVES");
+
+    if (mode == RANDOM){ // populate random_moves with integers from 0 to dim*dim (each reprenting a move key)
+        n_rand_moves = rand() % dim*dim;
+        if(n_rand_moves == 0) n_rand_moves++; // always move atleast one position
+        //random_moves = gen_rand_moves(dim, random_moves, n_rand_moves);
+        random_moves = (int*)realloc(random_moves, sizeof(int)*n_rand_moves);
+        for(int i=0; i<n_rand_moves; i++)
+            random_moves[i] = rand() % 100;
+    }
+
+    int shape_ind = 0; // first shape
+    char *curr_bmap = shapes[game_shapes[shape_ind]].bitmap; // the shape of the current ship to be placed
+
+    char *map_repr = gen_map_repr(dim);
 
     // the first ship starts here (before moving)
     draw_ship(curr_bmap, map, map_repr, old_x, old_y, curr_x, curr_y, curr_rot);
@@ -194,14 +229,7 @@ MAP *fill_map(MAP *map, int n_ships, int *game_shapes, MODE mode){
 
     while (shape_ind < n_ships){
         if (mode == MANUAL){
-            system("clear");
-            draw_field(map_repr, dim);
-            printf("Place your ships!\n");
-            printf("To move the ship around press on the following keys + [ENTER]:\n");
-            printf("w -> up | s -> down | a -> left | d -> right | r -> rotate\n");
-            printf("To place the ship press [SPACE] + [ENTER]\n\n>> ");
-            scanf("%c", &key_press);
-            getchar();      // clear input buffer
+            key_press = get_keypress(dim, map_repr);
         }
         else if (mode == RANDOM){
             if (move_ind == n_rand_moves){ // executed all moves. place the ship.
@@ -209,8 +237,8 @@ MAP *fill_map(MAP *map, int n_ships, int *game_shapes, MODE mode){
                 // value resets
                 move_ind = 0;
                 n_rand_moves = rand() % dim*dim;
-
                 if(n_rand_moves == 0) n_rand_moves++; // always move atleast one position
+
                 if(shape_ind + 1 < n_ships){ // reallocate memory for new moves (except on the last cycle)
                     random_moves = (int*)realloc(random_moves, sizeof(int)*n_rand_moves);
                     for(int i=0; i<n_rand_moves; i++)
@@ -218,12 +246,8 @@ MAP *fill_map(MAP *map, int n_ships, int *game_shapes, MODE mode){
                 }
             }
             else{ // get the key represented by the number
-                int aux = random_moves[move_ind];
-                if (aux >= 0 && aux < 20) key_press = 'w';
-                else if (aux >= 20 && aux < 40) key_press = 'a';
-                else if (aux >= 40 && aux < 60) key_press = 'd';
-                else if (aux >= 60 && aux < 80) key_press = 's';
-                else key_press = 'r';
+                int rand_ind = random_moves[move_ind];
+                key_press = get_rand_keypress(rand_ind);
                 move_ind++;
             }
         }

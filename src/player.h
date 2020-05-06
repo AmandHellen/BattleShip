@@ -24,9 +24,6 @@ void print_dashboard(PLAYER *, PLAYER*);
 void free_player(PLAYER *);
 
 void player_error(char *);
-
-void gen_rand_moves(int *, int);
-
 //-----------------------------------------------------
 
 #endif

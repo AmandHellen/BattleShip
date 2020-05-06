@@ -76,8 +76,8 @@ void play(PLAYER *p1, PLAYER *p2){
 	while(!finished){
 input_attack:
 		system("clear");
-		print_dashboard(curr_player, other_player);
-		//print_map(other_player->map);
+		//print_dashboard(curr_player, other_player);
+		print_map(other_player->map);
 		printf("\nNow playing: %s\n", curr_player->name);
 		c = input_coord();
 		int attack_result = attack(c, curr_player, other_player);

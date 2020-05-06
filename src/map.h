@@ -24,7 +24,7 @@ MAP *create_map(int);
 
 void print_strategy(MAP *);
 
-//void print_map(MAP*);
+void print_map(MAP*);
 
 bool valid_position(char *, int, int, int, int, int, char *, MAP *);
 
@@ -33,6 +33,14 @@ int rotate_point(int, int, int, int);
 void draw_ship(char *, MAP *, char *, int, int, int, int, int);
 
 void draw_field(char *, int);
+
+void gen_rand_moves(int, int*, int);
+
+char *gen_map_repr(int);
+
+char get_keypress(int, char*);
+
+char get_rand_keypress(int);
 
 MAP *fill_map(MAP *, int, int *, MODE);
 
