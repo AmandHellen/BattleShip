@@ -189,6 +189,52 @@ char get_rand_keypress(int rand_ind){
     else return 'r';
 }
 
+int update_position(char key_press, char **curr_bmap, int *curr_rot, int *curr_x, int *curr_y,
+                     int old_x, int old_y, char *map_repr, MAP *map, int *shape_ind, int *game_shapes, MODE mode){
+    int shape;
+    switch(tolower(key_press)){
+        case 'w':
+            (*curr_y) -= (valid_position(*curr_bmap, *curr_rot, *curr_x, *curr_y, *curr_x, *curr_y - 1, map_repr, map)) ? 1 : 0;
+            break;
+        case 's':
+            (*curr_y) += (valid_position(*curr_bmap, *curr_rot, *curr_x, *curr_y, *curr_x, *curr_y + 1, map_repr, map)) ? 1 : 0;
+            break;
+        case 'd':
+            (*curr_x) += (valid_position(*curr_bmap, *curr_rot, *curr_x, *curr_y, *curr_x + 1, *curr_y, map_repr, map)) ? 1 : 0;
+            break;
+        case 'a':
+            (*curr_x) -= (valid_position(*curr_bmap, *curr_rot, *curr_x, *curr_y, *curr_x - 1, *curr_y, map_repr, map)) ? 1 : 0;
+            break;
+        case 'r':
+            (*curr_rot) += (valid_position(*curr_bmap, *curr_rot + 1, *curr_x, *curr_y, *curr_x, *curr_y, map_repr, map)) ? 1 : 0;
+            break;
+        case 32: // try to place the ship on this position
+            shape = game_shapes[*shape_ind];
+            if(!place_ship(shape, *curr_bmap, map, map_repr, *curr_x, *curr_y, *curr_rot)){
+                if (mode == MANUAL){
+                    printf("You can't place the ship here!\n");
+                    delay(1);
+                }
+                return -1;
+            }
+            (*shape_ind)++; // next ship
+            (*curr_bmap) = shapes[game_shapes[*shape_ind]].bitmap;
+            // back to starting position (all the ships start here)
+            (*curr_rot) = 0;
+            (*curr_x) = map -> dim / 2;
+            (*curr_y) = 0;
+            fflush(stdin);
+            draw_ship(*curr_bmap, map, map_repr, old_x, old_y, *curr_x, *curr_y, *curr_rot);
+            return -1;
+        default:
+            if (mode == MANUAL){
+                printf("Invalid key!\n");
+                delay(1);
+            }
+    }
+    return 0;
+}
+
 /*
 ship placement loop
 Updates the map matrix and returns that map
@@ -201,7 +247,6 @@ MAP *fill_map(MAP *map, int n_ships, int *game_shapes, MODE mode){
     int curr_y = 0; // current y-axis coordinate of the ship
     int old_x = curr_x;
     int old_y = curr_y;
-    int shape;
     int n_rand_moves; // number of random moves to execute
 
     int *random_moves = (int*)malloc(0);
@@ -253,46 +298,11 @@ MAP *fill_map(MAP *map, int n_ships, int *game_shapes, MODE mode){
         }
 
         // update the new position according to the key pressed
-        switch(tolower(key_press)){
-            case 'w':
-                curr_y -= (valid_position(curr_bmap, curr_rot, curr_x, curr_y, curr_x, curr_y - 1, map_repr, map)) ? 1 : 0;
-                break;
-            case 's':
-                curr_y += (valid_position(curr_bmap, curr_rot, curr_x, curr_y, curr_x, curr_y + 1, map_repr, map)) ? 1 : 0;
-                break;
-            case 'd':
-                curr_x += (valid_position(curr_bmap, curr_rot, curr_x, curr_y, curr_x + 1, curr_y, map_repr, map)) ? 1 : 0;
-                break;
-            case 'a':
-                curr_x -= (valid_position(curr_bmap, curr_rot, curr_x, curr_y, curr_x - 1, curr_y, map_repr, map)) ? 1 : 0;
-                break;
-            case 'r':
-                curr_rot += (valid_position(curr_bmap, curr_rot + 1, curr_x, curr_y, curr_x, curr_y, map_repr, map)) ? 1 : 0;
-                break;
-            case 32: // try to place the ship on this position
-                shape = game_shapes[shape_ind];
-                if(!place_ship(shape, curr_bmap, map, map_repr, curr_x, curr_y, curr_rot)){
-                        if (mode == MANUAL){
-                            printf("You can't place the ship here!\n");
-                            delay(1);
-                        }
-                    continue;
-                }
-                shape_ind++; // next ship
-                curr_bmap = shapes[game_shapes[shape_ind]].bitmap;
-                // back to starting position (all the ships start here)
-                curr_rot = 0;
-                curr_x = dim / 2;
-                curr_y = 0;
-                fflush(stdin);
-                draw_ship(curr_bmap, map, map_repr, old_x, old_y, curr_x, curr_y, curr_rot);
-                continue;
-            default:
-                if (mode == MANUAL){
-                    printf("Invalid key!\n");
-                    delay(1);
-                }
-        }
+
+        int aux = update_position(key_press, &curr_bmap, &curr_rot, &curr_x, &curr_y,
+                                  old_x, old_y, map_repr, map, &shape_ind, game_shapes, mode);
+        if (aux == -1) continue;
+
         fflush(stdin);
         draw_ship(curr_bmap, map, map_repr, old_x, old_y, curr_x, curr_y, curr_rot);
 

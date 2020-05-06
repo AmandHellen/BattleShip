@@ -42,6 +42,8 @@ char get_keypress(int, char*);
 
 char get_rand_keypress(int);
 
+int update_position(char, char**, int*, int*, int*, int, int, char*, MAP*, int*, int*, MODE);
+
 MAP *fill_map(MAP *, int, int *, MODE);
 
 bool place_ship(int, char *, MAP *, char *, int, int, int);
