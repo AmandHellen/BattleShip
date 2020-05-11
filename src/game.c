@@ -101,24 +101,32 @@ void clean_game(PLAYER *curr, PLAYER *adv){
 	free_player(adv);
 }
 
+PLAYER *player_input(int n_player, int dim, int n_ships, int *game_shapes, MODE mode){
+	char name[NAME_LEN];
+	printf("Player %d: type your name >> ", n_player);
+	fgets(name, NAME_LEN, stdin);
+	name[strcspn(name ,"\n")] = 0;
+	if (mode == RANDOM) printf("Randomly filling %s's map...\n", name);
+	PLAYER *p = create_player(name, dim, n_ships, game_shapes, mode);
+	if (mode == RANDOM) printf("%s's map successfully generated.\n", name);
+	return p;
+}
+
 // prompts the players for their names and fills their maps (RANDOM or MANUAL)
 void input_players(PLAYER **p1, PLAYER **p2, int dim, int n_ships, int *game_shapes, MODE mode){
-	char name[NAME_LEN];
-
-	printf("Player 1: type your name >> ");
-	fgets(name, NAME_LEN, stdin);
-	name[strcspn(name ,"\n")] = 0;
-	if (mode == RANDOM) printf("Randomly filling %s's map...\n", name);
-	*p1 = create_player(name, dim, n_ships, game_shapes, mode);
-	if (mode == RANDOM) printf("%s's map successfully generated.\n", name);
-
-	printf("Player 2: type your name >> ");
-	fgets(name, NAME_LEN, stdin);
-	name[strcspn(name ,"\n")] = 0;
-	if (mode == RANDOM) printf("Randomly filling %s's map...\n", name);
-	*p2 = create_player(name, dim, n_ships, game_shapes, mode);
-	if (mode == RANDOM) printf("%s's map successfully generated.\n", name);
+	*p1 = player_input(1, dim, n_ships, game_shapes, mode);
+	*p2 = player_input(2, dim, n_ships, game_shapes, mode);
 	delay(1);
+}
+
+int *gen_game_shapes(int n_ships){
+	int *game_shapes = (int*)malloc(sizeof(int)*n_ships); // random ships
+	if (game_shapes == NULL)
+		game_error("Failed to allocate memory for GAME_SHAPES");
+	for(int i=0; i<n_ships; i++){
+		game_shapes[i] = rand() % NSHAPES;
+	}
+	return game_shapes;
 }
 
 // Call this in case of error
@@ -133,6 +141,7 @@ int main(){
 	int n_ships; // number of ships to be placed
 	int mode;	// 0 -> RANDOM / 1 -> MANUAL
 	PLAYER *p1, *p2;
+	int *game_shapes;
 	srand ( time(NULL) );	// seed the random number generator
 	system("clear");
 	printf("===============================\n#####=====BATTLESHIP======#####\n===============================\n\n");
@@ -145,12 +154,7 @@ start_game:
 		dim = rand() % (MAX_DIM - MIN_DIM + 1) + MIN_DIM;
 		printf("Map dimension: %d x %d\n",dim,dim);
 		n_ships = (dim*dim) / (BMAP_SIZE*BMAP_SIZE);
-		int *game_shapes = (int*)malloc(sizeof(int)*n_ships); // random ships
-		if (game_shapes == NULL)
-			game_error("Failed to allocate memory for GAME_SHAPES");
-		for(int i=0; i<n_ships; i++){
-			game_shapes[i] = rand() % NSHAPES;
-		}
+		game_shapes = gen_game_shapes(n_ships);
 		getchar();
 		input_players(&p1, &p2, dim, n_ships, game_shapes, RANDOM);
 		free(game_shapes);
@@ -166,12 +170,7 @@ manual_mode:
 		}
 		getchar();
 		n_ships = (dim*dim) / (BMAP_SIZE*BMAP_SIZE);
-		int *game_shapes = (int*)malloc(sizeof(int)*n_ships); // random ships
-		if (game_shapes == NULL)
-			game_error("Failed to allocate memory for GAME_SHAPES");
-		for(int i=0; i<n_ships; i++){
-			game_shapes[i] = rand() % NSHAPES;
-		}
+		game_shapes = gen_game_shapes(n_ships);
 		input_players(&p1, &p2, dim, n_ships, game_shapes, MANUAL);
 		free(game_shapes);
 	}

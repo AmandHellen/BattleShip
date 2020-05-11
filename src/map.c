@@ -249,17 +249,9 @@ MAP *fill_map(MAP *map, int n_ships, int *game_shapes, MODE mode){
     int old_y = curr_y;
     int n_rand_moves; // number of random moves to execute
 
-    int *random_moves = (int*)malloc(0);
-    if (random_moves == NULL)
-        map_error("Failed to allocate memory for RANDOM_MOVES");
-
     if (mode == RANDOM){ // populate random_moves with integers from 0 to dim*dim (each reprenting a move key)
         n_rand_moves = rand() % dim*dim;
         if(n_rand_moves == 0) n_rand_moves++; // always move atleast one position
-        //random_moves = gen_rand_moves(dim, random_moves, n_rand_moves);
-        random_moves = (int*)realloc(random_moves, sizeof(int)*n_rand_moves);
-        for(int i=0; i<n_rand_moves; i++)
-            random_moves[i] = rand() % 100;
     }
 
     int shape_ind = 0; // first shape
@@ -283,15 +275,9 @@ MAP *fill_map(MAP *map, int n_ships, int *game_shapes, MODE mode){
                 move_ind = 0;
                 n_rand_moves = rand() % dim*dim;
                 if(n_rand_moves == 0) n_rand_moves++; // always move atleast one position
-
-                if(shape_ind + 1 < n_ships){ // reallocate memory for new moves (except on the last cycle)
-                    random_moves = (int*)realloc(random_moves, sizeof(int)*n_rand_moves);
-                    for(int i=0; i<n_rand_moves; i++)
-                        random_moves[i] = rand() % 100;
-                }
             }
             else{ // get the key represented by the number
-                int rand_ind = random_moves[move_ind];
+                int rand_ind = rand() % 100;
                 key_press = get_rand_keypress(rand_ind);
                 move_ind++;
             }
@@ -310,7 +296,6 @@ MAP *fill_map(MAP *map, int n_ships, int *game_shapes, MODE mode){
         old_y = curr_y;
     }
     free(map_repr);
-    if (mode == RANDOM) free(random_moves);
     return map;
 }
 

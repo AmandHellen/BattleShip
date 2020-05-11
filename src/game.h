@@ -22,6 +22,8 @@ void clean_game(PLAYER *, PLAYER *);
 
 void input_players(PLAYER **, PLAYER **, int, int, int *, MODE);
 
+int *gen_game_shapes(int);
+
 void game_error(char *);
 
 //-----------------------------------------------------------
