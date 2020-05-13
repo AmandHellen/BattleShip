@@ -7,7 +7,9 @@
 
 typedef enum {RANDOM, MANUAL} MODE; // ship creation mode
 
-typedef enum {EMPTY, FILLED, HIT, MISS} STATE; // status of each matrix cell
+typedef enum {EMPTY, FILLED} STATE; // status of each matrix cell
+
+typedef enum {UNKNOWN, HIT, MISS} ATTACK; // strategy 
 
 typedef struct coord{
 	int i, j;

@@ -10,7 +10,8 @@
 #define MAX_DIM 40
 
 typedef struct tile{
-    STATE state; // 0 -> EMPTY / 1 -> FILLED / 2 -> HIT / 3 -> MISS
+    ATTACK atk_cell; //0 -> UNKNOWN / 1 -> HIT / 2 -> MISS
+    STATE state; // 0 -> EMPTY / 1 -> FILLED
     SHIP* ship;	// in case there's a ship in this tile
 }TILE;
 
@@ -22,7 +23,7 @@ typedef struct map{
 //---------------------------------------------------
 MAP *create_map(int);
 
-void print_strategy(MAP *);
+void print_strategy(MAP *, MAP *);
 
 void print_map(MAP*);
 
@@ -33,8 +34,6 @@ int rotate_point(int, int, int, int);
 void draw_ship(char *, MAP *, char *, int, int, int, int, int);
 
 void draw_field(char *, int);
-
-void gen_rand_moves(int, int*, int);
 
 char *gen_map_repr(int);
 

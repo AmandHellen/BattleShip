@@ -10,6 +10,7 @@ MAP *create_map(int dim){
     //initialize all the positions as EMPTY
     for(int i=0; i<dim; i++){
         for(int j=0; j<dim; j++){
+            matrix[i*dim + j].atk_cell = UNKNOWN;
             matrix[i*dim + j].state = EMPTY;
             matrix[i*dim + j].ship = NULL;
         }
@@ -18,25 +19,24 @@ MAP *create_map(int dim){
     return m;
 }
 
-void print_strategy(MAP *m){
+void print_strategy(MAP *curr_map, MAP *adv_map){
+    int dim = curr_map -> dim;
+
     printf("  ");
-    for (int i = 0; i < m -> dim; i++)
+    for (int i = 0; i < dim; i++)
         printf("%.2d ", i);
     printf("\n");
 
-    for(int i=0; i< m -> dim; i++){
+    for(int i=0; i < dim; i++){
         printf("%.2d", i);
-        for(int j=0; j< m -> dim; j++){
-            STATE pos = m -> matrix[i * m->dim + j].state;
+        for(int j=0; j< dim; j++){
+            ATTACK pos = curr_map -> matrix[i * dim + j].atk_cell;
             switch(pos){
-                case EMPTY:
-                    printf(" . ");
-                    break;
-                case FILLED:
+                case UNKNOWN:
                     printf(" . ");
                     break;
                 case HIT:
-                    if(m -> matrix[i * m->dim + j].ship->sunk)
+                    if(adv_map -> matrix[i * dim + j].ship->sunk)
                         printf(" S ");
                     else
                         printf(" X ");
@@ -61,19 +61,13 @@ void print_map(MAP* m){
     for(int i=0; i< m -> dim; i++){
         printf("%.2d", i);
         for(int j=0; j< m -> dim; j++){
-            STATE pos = m -> matrix[i * m->dim + j].state;
-            switch(pos){
+            STATE s = m -> matrix[i * m->dim + j].state;
+            switch(s){
                 case EMPTY:
                     printf(" . ");
                     break;
                 case FILLED:
                     printf(" O ");
-                    break;
-                case HIT:
-                    printf(" X ");
-                    break;
-                case MISS:
-                    printf(" . ");
                     break;
             }
         }
@@ -143,13 +137,6 @@ void draw_field(char *map_repr, int dim){
             }
             printf("\n");
         }
-}
-
-void gen_rand_moves(int dim, int *random_moves, int n_rand_moves){
-    random_moves = (int*)realloc(random_moves, sizeof(int)*n_rand_moves);
-    for(int i=0; i<n_rand_moves; i++)
-        random_moves[i] = rand() % 100;
-    //return random_moves;
 }
 
 char *gen_map_repr(int dim){
@@ -353,7 +340,7 @@ void free_map(MAP *m){
     if(m != NULL){
         for(int i = 0; i < dim; i++){
             for(int j = 0; j < dim; j++){
-                if (m -> matrix[i*dim + j].state == FILLED || m -> matrix[i*dim + j].state == HIT){
+                if (m -> matrix[i*dim + j].state == FILLED){
                     int shape = m -> matrix[i*dim + j].ship -> shape;
                     int rot = m -> matrix[i*dim + j].ship -> rot;
                     COORD bmap_begin = m -> matrix[i*dim +j].ship -> bmap_begin;

@@ -8,7 +8,7 @@ int main(){
 	for(int i=0; i<n_ships; i++){
 		game_shapes[i] = rand() % NSHAPES;
 	}
-	PLAYER *p1 = create_player("Amanda", 10, n_ships, game_shapes, MANUAL);
+	PLAYER *p1 = create_player("Amanda", 10, n_ships, game_shapes, RANDOM);
 	//PLAYER *p2 = create_player("Gui", 10, n_ships, game_shapes, MANUAL);
 
 	print_map(p1 -> map);

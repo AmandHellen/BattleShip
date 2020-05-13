@@ -21,9 +21,14 @@ Returns 0 for misses, 1 for hits and -1 in case the coordinate was previously tr
 int attack(COORD c, PLAYER *curr, PLAYER *adv){
 	int dim = adv->map->dim;
 	int pos = c.i*dim + c.j; // bidimensional index to unidimensional conversion
-
 	if(pos < 0 || pos >= dim*dim ){ // out of bounds
 		printf("Invalid coordinate. Try again!\n");
+		return -1;
+	}
+	ATTACK a = curr->map->matrix[pos].atk_cell;
+	if (a != UNKNOWN){
+		printf("\nThis position was previously attacked. Try again!\n");
+		delay(1);
 		return -1;
 	}
 	STATE state = adv->map->matrix[pos].state;
@@ -31,10 +36,10 @@ int attack(COORD c, PLAYER *curr, PLAYER *adv){
 		case EMPTY:
 			printf("\nYou missed!\n");
 			delay(1);
-			adv->map->matrix[pos].state = MISS;
+			curr->map->matrix[pos].atk_cell = MISS;
 			return 0;
 		case FILLED:
-			adv->map->matrix[pos].state = HIT; // update the opponent's map state
+			curr->map->matrix[pos].atk_cell = HIT; // update the opponent's map state
 			adv->map->matrix[pos].ship->hits++; // update the opponent's ship hit count
 			if(adv->map->matrix[pos].ship->size == adv->map->matrix[pos].ship->hits){ // sunk
 				printf("\nSUNK!\n");
@@ -47,14 +52,6 @@ int attack(COORD c, PLAYER *curr, PLAYER *adv){
 				delay(1);
 			}
 			return 1;
-		case HIT:
-			printf("\nThis position was previously attacked. Try again!\n");
-			delay(1);
-			return -1;
-		case MISS:
-			printf("\nThis position was previously attacked. Try again!\n");
-			delay(1);
-			return -1;
 	}
 
 	return 0;
@@ -76,8 +73,8 @@ void play(PLAYER *p1, PLAYER *p2){
 	while(!finished){
 input_attack:
 		system("clear");
-		//print_dashboard(curr_player, other_player);
-		print_map(other_player->map);
+		print_dashboard(curr_player, other_player);
+		//print_map(other_player->map);
 		printf("\nNow playing: %s\n", curr_player->name);
 		c = input_coord();
 		int attack_result = attack(c, curr_player, other_player);

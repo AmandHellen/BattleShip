@@ -13,7 +13,7 @@ PLAYER *create_player(char *name, int dim, int n_ships, int *game_shapes, MODE m
 
 //prints the current player's strategy (based on the adversary map) and the number of remaining ships
 void print_dashboard(PLAYER *curr, PLAYER *adv){
-    print_strategy(adv -> map);
+    print_strategy(curr -> map, adv -> map);
     printf("X -> HIT\nM -> MISS\nS -> SUNK\n");
     //print_map(p -> map);
     printf("\n%s's remaining ships: %d\n", curr -> name, curr -> n_ships);
