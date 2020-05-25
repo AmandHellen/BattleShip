@@ -1,12 +1,11 @@
 #include "player.h"
 
 // returns a new instance of PLAYER
-PLAYER *create_player(char *name, int dim, int n_ships, int *game_shapes, MODE mode){
+PLAYER *create_player(char *name, MAP empty_map, int n_ships, int *game_shapes, MODE mode){
     PLAYER *p = (PLAYER*)malloc(sizeof(PLAYER));
     if(p == NULL){player_error("Failed to allocate memory for PLAYER");}
     memcpy(p -> name,   name, NAME_LEN);
-    MAP *empty_map = create_map(dim);
-    p -> map = fill_map(empty_map, n_ships, game_shapes, mode);
+    p -> map = empty_map;
     p -> n_ships = n_ships;
     return p;
 }

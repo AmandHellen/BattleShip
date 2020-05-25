@@ -15,7 +15,7 @@ typedef struct shape{	// a struct containing a bitmap
 typedef struct ship{
     int size; // number of filled cells in the bitmap
     int hits;   // how many attacks suffered
-	bool sunk; 
+	bool sunk;
 	int shape; // index of SHAPE shapes[]
 	int rot; // shape rotation
 	COORD bmap_begin; // the map coordinates for the first bitmap cell

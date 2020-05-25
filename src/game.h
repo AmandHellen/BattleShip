@@ -6,11 +6,30 @@
 #include <time.h>
 #include "utils.h"
 #include "player.h"
+#include "map.h"
 #include "ship.h"
 
 //-----------------------------------------------------------
 
 COORD input_coord(void);
+
+bool valid_position(char *, int, int, int, int, int, char *, MAP );
+
+void draw_ship(char *, MAP , char *, int, int, int, int, int);
+
+void draw_field(char *, int);
+
+char *gen_map_repr(int);
+
+char get_keypress(int, char*);
+
+char get_rand_keypress(int);
+
+int update_position(char, char**, int*, int*, int*, int, int, char*, MAP, int*, int*, MODE);
+
+MAP fill_map(MAP, int, int *, MODE);
+
+bool place_ship(int, char *, MAP , char *, int, int, int);
 
 int attack(COORD , PLAYER *, PLAYER *);
 
