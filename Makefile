@@ -15,4 +15,4 @@ test_player:
 test_qtree:
 	gcc -g -Wall tests/test_qtree.c -o test_qtree -L. -lbattleship
 game:
-	gcc -Wall src/game.c -o battleship -L. -lbattleship
+	gcc -g -Wall src/game.c -o battleship -L. -lbattleship

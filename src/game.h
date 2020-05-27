@@ -17,11 +17,14 @@ bool valid_position(char *, int, int, int, int, int, char *, MAP );
 
 void draw_ship(char *, MAP , char *, int, int, int, int, int);
 
-void draw_field(char *, int);
+void draw_field(char *);
 
-char *gen_map_repr(int);
+char *gen_map_repr(void);
 
-char get_keypress(int, char*);
+char get_keypress(char*);
+
+void print_map(MAP);
+
 
 char get_rand_keypress(int);
 
@@ -39,7 +42,9 @@ void play(PLAYER *, PLAYER *);
 
 void clean_game(PLAYER *, PLAYER *);
 
-void input_players(PLAYER **, PLAYER **, int, int, int *, MODE);
+void input_players(PLAYER **, PLAYER **, int, int *, MODE);
+
+PLAYER *player_input(int , int, int *, MODE);
 
 int *gen_game_shapes(int);
 

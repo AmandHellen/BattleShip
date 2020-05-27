@@ -17,31 +17,20 @@ typedef struct cell{
     SHIP* ship;	// in case there's a ship in this tile
 }CELL;
 
+int dim;
+
 //---------------------------------------------------
 MAP create_map(int);
 
 int get_dim(MAP);
 
-//SHIP *get_ship(MAP, COORD);
+int insert_cell(COORD, SHIP*, MAP);
 
-int insert_ship(COORD, SHIP*, MAP);
-
-//ATTACK get_atk_cell(COORD, MAP);
-
-int get_cell(COORD, CELL *, MAP);
-
-//ATTACK get_atk(CELL);
-/*
-void set_atk_cell(COORD, MAP, ATTACK);
-
-void inc_hit_count(COORD, MAP);
-*/
+int rotate_point(int, int, int, int);
 
 void print_strategy(MAP , MAP);
 
-void print_map(MAP);
-
-int rotate_point(int, int, int, int);
+CELL *get_cell(COORD, MAP);
 
 void remove_ship(MAP, int, int, int, int);
 

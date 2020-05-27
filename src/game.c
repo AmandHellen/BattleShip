@@ -1,5 +1,7 @@
 #include "game.h"
 
+//int dim;
+
 /*
 prompts the user for the attack i and j coordinates
 Returns a COORD with said i and j
@@ -16,21 +18,45 @@ COORD input_coord(){
 
 // checks if a move from (old_x, old_y) -> (new_x, new_y) is valid (between the boundaries)
 bool valid_position(char *shape, int curr_rot, int old_x, int old_y, int new_x, int new_y, char *map_repr, MAP map){
-    int dim = get_dim(map);
+   // int dim = get_dim(map);
     int old_pos;
 	COORD old;
+    CELL *c; 
+    int pi;
+
     for (int i = 0; i < BMAP_SIZE; i++)
         for (int j = 0; j < BMAP_SIZE; j++)
         {
 			old.i = old_y + i;
 			old.j = old_x + j;
+           /* printf("(%d/%d)\n", old.i, old.j);
+            delay(0.5);*/
             old_pos = (old_y + i)*dim + (old_x + j);
-			if(get_cell(old, map).ship == NULL && old_pos >= 0 && old_pos < dim*dim){
+            /*if(get_cell(old, &c, map) == -1) 
+                game_error("Cannot get cell");*/
+            if((c = get_cell(old,map)) == NULL){  
+               // printf("(%d/%d)\n", old.i, old.j);      
+              //  continue;     
+                //map_error("Cannot get cell VALID POSITION");
+                goto coisa;
+            }
+
+            //c = get_cell(old,map);
+                
+			if(c->ship == NULL && old_pos >= 0 && old_pos < dim*dim){
                 map_repr[old_pos] = '.'; // erase the 'X's on the the old ship position
             }
-            int pi = rotate_point(i, j, curr_rot, BMAP_SIZE); // get the unidimensional index of this point when curr_rot is applied
+
+coisa:
+            pi = rotate_point(i, j, curr_rot, BMAP_SIZE); // get the unidimensional index of this point when curr_rot is applied
+
+           // printf("dim: %d | new_y + i: %d | new_x + j: %d\n", dim, new_y + i, new_x + j);
+
+
             if (shape[pi] != '.'){
+               // printf("QUASE FORA DO MAPA!\n");
                 if ((new_y +i < 0 || new_y + i >= dim) || (new_x + j < 0 || new_x + j >= dim)){
+                   // printf("FORA DO MAPA!\n");
                     return false; // the new move make the piece go beyond the boundaries of the field.
                 }
             }
@@ -40,8 +66,9 @@ bool valid_position(char *shape, int curr_rot, int old_x, int old_y, int new_x, 
 
 
 void draw_ship(char *curr_bmap, MAP map, char *map_repr, int old_x, int old_y, int curr_x, int curr_y, int curr_rot){
-    int dim = get_dim(map);
+    //int dim = get_dim(map);
 	COORD old;
+    CELL *c;
     for (int i = 0; i < BMAP_SIZE; i++)
         for (int j = 0; j < BMAP_SIZE; j++){
             if (curr_bmap[rotate_point(i, j, curr_rot, BMAP_SIZE)] != '.'){
@@ -49,14 +76,22 @@ void draw_ship(char *curr_bmap, MAP map, char *map_repr, int old_x, int old_y, i
                 map_repr[(curr_y + i)*dim + (curr_x + j)] = 'X';
 				old.i = old_y + i;
 				old.j = old_x + j;
-				if(get_cell(old, map).ship != NULL)
+               /* if(get_cell(old, &c, map) == -1) 
+                    game_error("Cannot get cell");*/
+                if((c = get_cell(old,map)) == NULL)
+                    continue;
+                    //map_error("Cannot get cell DRAW_SHIP");
+                
+                  printf("%d/%d\n", old.i, old.j);
+
+				if(c->ship != NULL)
                     map_repr[(old_y + i)*dim + (old_x + j)] = 'O';
             }
         }
 }
 
 //prints the map representation to the screen
-void draw_field(char *map_repr, int dim){
+void draw_field(char *map_repr){
     printf("  ");
         for (int i = 0; i < dim; i++)
             printf("%.2d ", i);
@@ -71,7 +106,7 @@ void draw_field(char *map_repr, int dim){
         }
 }
 
-char *gen_map_repr(int dim){
+char *gen_map_repr(){
     // just a representation of the map for UI purposes
     char *map_repr = (char*)malloc(sizeof(char)*dim*dim+1);
     if (map_repr == NULL)
@@ -87,10 +122,12 @@ char *gen_map_repr(int dim){
     return map_repr;
 }
 
-char get_keypress(int dim, char* map_repr){
+
+
+char get_keypress(char* map_repr){
     char key_press;
-    system("clear");
-    draw_field(map_repr, dim);
+   // system("clear");
+    draw_field(map_repr);
     printf("Place your ships!\n");
     printf("To move the ship around press on the following keys + [ENTER]:\n");
     printf("w -> up | s -> down | a -> left | d -> right | r -> rotate\n");
@@ -140,7 +177,7 @@ int update_position(char key_press, char **curr_bmap, int *curr_rot, int *curr_x
             (*curr_bmap) = shapes[game_shapes[*shape_ind]].bitmap;
             // back to starting position (all the ships start here)
             (*curr_rot) = 0;
-            (*curr_x) = get_dim(map) / 2;
+            (*curr_x) = dim / 2;
             (*curr_y) = 0;
             fflush(stdin);
             draw_ship(*curr_bmap, map, map_repr, old_x, old_y, *curr_x, *curr_y, *curr_rot);
@@ -154,12 +191,45 @@ int update_position(char key_press, char **curr_bmap, int *curr_rot, int *curr_x
     return 0;
 }
 
+//FOR DEBUG ONLY
+void print_map(MAP m){
+    COORD c; 
+    CELL *cell;
+    printf("  ");
+    for (int i = 0; i < dim; i++)
+        printf("%.2d ", i);
+    printf("\n");
+
+    for(int i=0; i< dim; i++){
+        printf("%.2d", i);
+        for(int j=0; j< dim; j++){
+            c.i = i; 
+            c.j = j;
+           /* if(get_cell(c, &cell, m) == -1) 
+                game_error("Cannot get cell");*/
+            if((cell = get_cell(c,m)) == NULL)
+                continue;
+                //map_error("Cannot get cell PRINT_MAP");
+            STATE s = cell->state;
+            switch(s){
+                case EMPTY:
+                    printf(" . ");
+                    break;
+                case FILLED:
+                    printf(" O ");
+                    break;
+            }
+        }
+        printf("\n");
+    }
+}
+
 /*
 ship placement loop
 Updates the map matrix and returns that map
 */
 MAP fill_map(MAP map, int n_ships, int *game_shapes, MODE mode){
-    int dim = get_dim(map);
+    //int dim = get_dim(map);
     char key_press;
     int curr_rot = 0; // angle of the current rotation (0 -> 0 | 1 -> 90 | 2 -> 180 | 3 -> 270)
     int curr_x = dim / 2; // current x-axis coordinate of the ship
@@ -176,7 +246,7 @@ MAP fill_map(MAP map, int n_ships, int *game_shapes, MODE mode){
     int shape_ind = 0; // first shape
     char *curr_bmap = shapes[game_shapes[shape_ind]].bitmap; // the shape of the current ship to be placed
 
-    char *map_repr = gen_map_repr(dim);
+    char *map_repr = gen_map_repr();
 
     // the first ship starts here (before moving)
     draw_ship(curr_bmap, map, map_repr, old_x, old_y, curr_x, curr_y, curr_rot);
@@ -185,7 +255,8 @@ MAP fill_map(MAP map, int n_ships, int *game_shapes, MODE mode){
 
     while (shape_ind < n_ships){
         if (mode == MANUAL){
-            key_press = get_keypress(dim, map_repr);
+            print_map(map);
+            key_press = get_keypress(map_repr);
         }
         else if (mode == RANDOM){
             if (move_ind == n_rand_moves){ // executed all moves. place the ship.
@@ -214,7 +285,7 @@ MAP fill_map(MAP map, int n_ships, int *game_shapes, MODE mode){
         old_x = curr_x;
         old_y = curr_y;
     }
-    //free(map_repr);
+    free(map_repr);
     return map;
 }
 
@@ -223,17 +294,26 @@ checks the matrix for collisions and place the ship if there's none
 Returns the result boolean result of said check
 */
 bool place_ship(int shape_ind, char *shape, MAP map, char *map_repr, int curr_x, int curr_y, int curr_rot){
-    int dim = get_dim(map);
+    CELL *c; 
+    //int dim = get_dim(map);
     COORD bmap_begin, curr;
     bmap_begin.i = curr_y;
     bmap_begin.j = curr_x;
     SHIP *s = create_ship(shape, shape_ind, curr_rot, bmap_begin);
+    CELL *cell;
+    
 
+    // collision checking
     for (int i = 0; i < BMAP_SIZE; i++){
         for (int j = 0; j < BMAP_SIZE; j++){
 			curr.i = curr_y + i;
 			curr.j = curr_x + j;
-			if (get_cell(curr, map).ship != NULL && (shape[rotate_point(i, j, curr_rot, BMAP_SIZE)] != '.')){
+            /*if(get_cell(curr, &c, map) == -1) 
+                game_error("Cannot get cell");*/
+            if((c = get_cell(curr,map)) == NULL)
+                continue;
+                //map_error("Cannot get cell PLACE_SHIP");
+			if (c->ship != NULL && (shape[rotate_point(i, j, curr_rot, BMAP_SIZE)] != '.')){
                 // collision!
                 free_ship(s);
                 return false;
@@ -247,8 +327,13 @@ bool place_ship(int shape_ind, char *shape, MAP map, char *map_repr, int curr_x,
             if (shape[rotate_point(i, j, curr_rot, BMAP_SIZE)] != '.'){
 				curr.i = curr_y + i;
 				curr.j = curr_x + j;
-				if(insert_ship(curr, s, map) < 0)
-					game_error("Cannot insert ship");
+				/*if(insert_cell(curr, s, map) < 0)
+					game_error("Cannot insert ship");*/
+                if((cell = get_cell(curr, map)) == NULL)
+                  //  map_error("");
+                    continue;
+                cell->ship = s;
+                cell->state = FILLED;            
                 map_repr[(curr_y + i)*dim + (curr_x + j)] = 'O';
             }
         }
@@ -257,26 +342,45 @@ bool place_ship(int shape_ind, char *shape, MAP map, char *map_repr, int curr_x,
     return true;
 }
 
+
 /*
 executes the attack by curr player on the adv player map and checks the game state
 Returns 0 for misses, 1 for hits and -1 in case the coordinate was previously tried
 */
 int attack(COORD c, PLAYER *curr, PLAYER *adv){
 	SHIP *s;
-	int dim = get_dim(adv->map);
+    CELL *curr_cell, *adv_cell; 
+
+	//int dim = get_dim(adv->map);
 	int pos = c.i*dim + c.j; // bidimensional index to unidimensional conversion
 	if(pos < 0 || pos >= dim*dim ){ // out of bounds
 		printf("Invalid coordinate. Try again!\n");
 		return -1;
 	}
-	ATTACK a = get_cell(c, curr->map).atk_cell;
-	if (a != UNKNOWN){
+  /*  if(get_cell(c, &curr_cell, curr->map) == -1){
+        game_error("Cannot get cell");
+    } */
+
+    if((curr_cell = get_cell(c,curr->map)) == NULL){
+        map_error("Cannot get cell ATTACK CURR");
+    }
+        
+        
+	if (curr_cell->atk_cell != UNKNOWN){
 		printf("\nThis position was previously attacked. Try again!\n");
 		delay(1);
 		return -1;
 	}
-	if((s = get_cell(c, adv->map).ship) != NULL){
-		set_atk_cell(c, curr->map, HIT);
+    /*if(get_cell(c, &adv_cell, adv->map) == -1){
+        game_error("Cannot get cell");
+    } */
+
+    if((adv_cell = get_cell(c,adv->map)) == NULL){
+        map_error("Cannot get cell ATTACK ADV");
+    }
+        
+	if((s = adv_cell->ship) != NULL){
+        curr_cell->atk_cell = HIT;
 		s->hits++;
 		if(s -> size == s -> hits){
 			printf("\nSUNK!\n");
@@ -292,7 +396,8 @@ int attack(COORD c, PLAYER *curr, PLAYER *adv){
 	}else{
 		printf("\nYou missed!\n");
 		delay(1);
-		set_atk_cell(c, curr->map, MISS);
+		//set_atk_cell(c, curr->map, MISS);
+        curr_cell->atk_cell = MISS;
 		return 0;
 	}
 	return 0;
@@ -313,7 +418,7 @@ void play(PLAYER *p1, PLAYER *p2){
 
 	while(!finished){
 input_attack:
-		system("cls || clear");
+	//	system("cls || clear");
 		print_dashboard(curr_player, other_player);
 		//print_map(other_player->map);
 		printf("\nNow playing: %s\n", curr_player->name);
@@ -339,7 +444,7 @@ void clean_game(PLAYER *curr, PLAYER *adv){
 	free_player(adv);
 }
 
-PLAYER *player_input(int n_player, int dim, int n_ships, int *game_shapes, MODE mode){
+PLAYER *player_input(int n_player, int n_ships, int *game_shapes, MODE mode){
 	char name[NAME_LEN];
 	printf("Player %d: type your name >> ", n_player);
 	fgets(name, NAME_LEN, stdin);
@@ -353,9 +458,9 @@ PLAYER *player_input(int n_player, int dim, int n_ships, int *game_shapes, MODE 
 }
 
 // prompts the players for their names and fills their maps (RANDOM or MANUAL)
-void input_players(PLAYER **p1, PLAYER **p2, int dim, int n_ships, int *game_shapes, MODE mode){
-	*p1 = player_input(1, dim, n_ships, game_shapes, mode);
-	*p2 = player_input(2, dim, n_ships, game_shapes, mode);
+void input_players(PLAYER **p1, PLAYER **p2, int n_ships, int *game_shapes, MODE mode){
+	*p1 = player_input(1, n_ships, game_shapes, mode);
+	*p2 = player_input(2, n_ships, game_shapes, mode);
 	delay(1);
 }
 
@@ -377,13 +482,13 @@ void game_error(char *msg){
 
 // main menu and game initializer
 int main(){
-	int dim;	// map dimension (dim * dim)
+	//int dim;	// map dimension (dim * dim)
 	int n_ships; // number of ships to be placed
 	int mode;	// 0 -> RANDOM / 1 -> MANUAL
 	PLAYER *p1, *p2;
 	int *game_shapes;
 	srand ( time(NULL) );	// seed the random number generator
-	system("cls || clear");
+	//system("cls || clear");
 	printf("===============================\n#####=====BATTLESHIP======#####\n===============================\n\n");
 
 start_game:
@@ -396,7 +501,7 @@ start_game:
 		n_ships = (dim*dim) / (BMAP_SIZE*BMAP_SIZE);
 		game_shapes = gen_game_shapes(n_ships);
 		getchar();
-		input_players(&p1, &p2, dim, n_ships, game_shapes, RANDOM);
+		input_players(&p1, &p2, n_ships, game_shapes, RANDOM);
 		free(game_shapes);
 
 	}
@@ -411,7 +516,7 @@ manual_mode:
 		getchar();
 		n_ships = (dim*dim) / (BMAP_SIZE*BMAP_SIZE);
 		game_shapes = gen_game_shapes(n_ships);
-		input_players(&p1, &p2, dim, n_ships, game_shapes, MANUAL);
+		input_players(&p1, &p2, n_ships, game_shapes, MANUAL);
 		free(game_shapes);
 	}
 	else{ // INVALID
