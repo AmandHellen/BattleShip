@@ -9,38 +9,32 @@
 #define MIN_DIM 10
 #define MAX_DIM 40
 
-typedef struct tile{
-    STATE state; // 0 -> EMPTY / 1 -> FILLED / 2 -> HIT / 3 -> MISS
-    SHIP* ship;	// in case there's a ship in this tile
-}TILE;
+typedef struct map *MAP;
 
-typedef struct map{
-    TILE *matrix;
-    int dim;
-}MAP;
+typedef struct cell{
+    ATTACK atk_cell; //0 -> UNKNOWN / 1 -> HIT / 2 -> MISS
+    STATE state; // 0 -> EMPTY / 1 -> FILLED
+    SHIP* ship;	// in case there's a ship in this tile
+}CELL;
+
+int dim;
 
 //---------------------------------------------------
-MAP *create_map(int);
+MAP create_map(int);
 
-void print_strategy(MAP *);
+int get_dim(MAP);
 
-//void print_map(MAP*);
-
-bool valid_position(char *, int, int, int, int, int, char *, MAP *);
+int insert_cell(COORD, SHIP*, MAP);
 
 int rotate_point(int, int, int, int);
 
-void draw_ship(char *, MAP *, char *, int, int, int, int, int);
+void print_strategy(MAP , MAP);
 
-void draw_field(char *, int);
+CELL *get_cell(COORD, MAP);
 
-MAP *fill_map(MAP *, int, int *, MODE);
+void remove_ship(MAP, int, int, int, int);
 
-bool place_ship(int, char *, MAP *, char *, int, int, int);
-
-void remove_ship(MAP *, int, int, int, int);
-
-void free_map(MAP *);
+void free_map(MAP);
 
 void map_error(char *);
 

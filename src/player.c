@@ -1,19 +1,18 @@
 #include "player.h"
 
 // returns a new instance of PLAYER
-PLAYER *create_player(char *name, int dim, int n_ships, int *game_shapes, MODE mode){
+PLAYER *create_player(char *name, MAP empty_map, int n_ships, int *game_shapes, MODE mode){
     PLAYER *p = (PLAYER*)malloc(sizeof(PLAYER));
     if(p == NULL){player_error("Failed to allocate memory for PLAYER");}
     memcpy(p -> name,   name, NAME_LEN);
-    MAP *empty_map = create_map(dim);
-    p -> map = fill_map(empty_map, n_ships, game_shapes, mode);
+    p -> map = empty_map;
     p -> n_ships = n_ships;
     return p;
 }
 
 //prints the current player's strategy (based on the adversary map) and the number of remaining ships
 void print_dashboard(PLAYER *curr, PLAYER *adv){
-    print_strategy(adv -> map);
+    print_strategy(curr -> map, adv -> map);
     printf("X -> HIT\nM -> MISS\nS -> SUNK\n");
     //print_map(p -> map);
     printf("\n%s's remaining ships: %d\n", curr -> name, curr -> n_ships);
